@@ -64,9 +64,9 @@ pub struct Question {
 
 #[account]
 pub struct Answer {
-    pub target_question: Pubkey,
     pub author: Pubkey,
     pub timestamp: i64,
+    pub target_question: Pubkey,
     pub content: String,
 }
 
