@@ -4,5 +4,7 @@
 target
 **/*.rs.bk
 node_modules
-test_ledger
+# Solana
+test-ledger
+# vscode 
 .history
