@@ -10,6 +10,7 @@ useFromRoute((route) => questionAddress.value = route.params.question)
 
 const loading = ref(false)
 const question = ref(null)
+
 watchEffect(async () => {
     try {
         loading.value = true

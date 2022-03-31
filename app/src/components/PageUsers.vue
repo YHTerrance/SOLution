@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { fetchQuestions } from '@/api'
+import { fetchQuestions, authorFilter } from '@/api'
 import { useFromRoute } from '@/composables'
 import QuestionList from '@/components/QuestionList'
 import QuestionSearch from '@/components/QuestionSearch'
@@ -22,7 +22,7 @@ const fetchAuthorQuestions = async () => {
     if (author.value === viewedAuthor.value) return
     try {
         loading.value = true
-        const fetchedQuestions = await fetchQuestions()
+        const fetchedQuestions = await fetchQuestions([authorFilter(author.value)])
         questions.value = fetchedQuestions
         viewedAuthor.value = author.value
     } finally {

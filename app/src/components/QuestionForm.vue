@@ -2,6 +2,7 @@
 import { computed, ref, toRefs } from 'vue'
 import { useAutoresizeTextarea, useCountCharacterLimit, useSlug } from '@/composables'
 import { askQuestion } from '@/api'
+import { useWallet } from 'solana-wallets-vue'
 
 // Props.
 const props = defineProps({
@@ -28,7 +29,7 @@ const characterLimitColour = computed(() => {
 })
 
 // Permissions.
-const connected = ref(true) // TODO: Check connected wallet.
+const { connected } = useWallet()
 const canQuestion = computed(() => content.value && characterLimit.value > 0)
 
 // Actions.
@@ -92,6 +93,6 @@ const send = async () => {
     </div>
 
     <div v-else class="px-8 py-4 bg-gray-50 text-gray-500 text-center border-b">
-        Connect your wallet to start questioning...
+        Connect your wallet to start asking questions...
     </div>
 </template>
