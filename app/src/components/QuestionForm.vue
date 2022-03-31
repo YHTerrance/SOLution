@@ -1,6 +1,8 @@
 <script setup>
 import { computed, ref, toRefs } from 'vue'
 import { useAutoresizeTextarea, useCountCharacterLimit, useSlug } from '@/composables'
+import IconSpinner from '@/components/atoms/IconSpinner.vue'
+import ToastItem from '@/components/atoms/ToastItem.vue'
 import { askQuestion } from '@/api'
 import { useWallet } from 'solana-wallets-vue'
 
@@ -33,13 +35,28 @@ const { connected } = useWallet()
 const canQuestion = computed(() => content.value && characterLimit.value > 0)
 
 // Actions.
-const emit = defineEmits(['added'])
-const send = async () => {
+const loading = ref(false)
+const emit = defineEmits(['added', 'failed'])
+const status = ref('success')
+const ask = async () => {
     if (! canQuestion.value) return
-    const question = await askQuestion(effectiveTopic.value, content.value)
-    emit('added', question)
-    topic.value = ''
-    content.value = ''
+    loading.value = true
+    let question
+    try {
+        question = await askQuestion(effectiveTopic.value, content.value)
+        status.value = "success"
+        emit('added', question)
+    }
+    catch (error) {
+        console.log(error)
+        status.value = "danger"
+        emit('failed', question)
+    }
+    finally {
+        loading.value = false
+        topic.value = ''
+        content.value = ''
+    }
 }
 </script>
 
@@ -50,7 +67,7 @@ const send = async () => {
         <textarea
             ref="textarea"
             rows="1"
-            class="text-xl w-full focus:outline-none resize-none mb-3"
+            class="text-xl w-full focus:outline-none resize-none mb-3 border-none focus:ring-transparent"
             placeholder="What's happening?"
             v-model="content"
         ></textarea>
@@ -62,7 +79,7 @@ const send = async () => {
                 <input
                     type="text"
                     placeholder="topic"
-                    class="text-pink-500 rounded-full pl-10 pr-4 py-2 bg-gray-100"
+                    class="text-pink-500 rounded-full pl-10 pr-4 py-2 bg-gray-100 border-none focus:ring-pink-500/50"
                     :value="effectiveTopic"
                     :disabled="forcedTopic"
                     @input="topic = $event.target.value"
@@ -81,12 +98,21 @@ const send = async () => {
                 </div>
 
                 <!-- question button. -->
-                <button
+                <button v-if="! loading"
                     class="text-white px-4 py-2 rounded-full font-semibold" :disabled="! canQuestion"
                     :class="canQuestion ? 'bg-pink-500' : 'bg-pink-300 cursor-not-allowed'"
-                    @click="send"
+                    @click="ask"
                 >
                     Ask
+                </button>
+                <button v-else
+                    type="button"
+                    class="inline-flex text-center items-center text-white px-4 py-2 rounded-full font-semibold bg-pink-300 cursor-not-allowed"
+                    disabled
+                    @click="ask"
+                >
+                    <icon-spinner></icon-spinner>
+                    Processing...
                 </button>
             </div>
         </div>
@@ -95,4 +121,6 @@ const send = async () => {
     <div v-else class="px-8 py-4 bg-gray-50 text-gray-500 text-center border-b">
         Connect your wallet to start asking questions...
     </div>
+
+    <toast-item class="mx-auto sm:w-3/4 md:w-2/4 fixed inset-x-0 bottom-10" :status="status"></toast-item>
 </template>

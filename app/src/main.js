@@ -1,6 +1,7 @@
 // CSS
 import 'solana-wallets-vue/styles.css'
 import './main.css'
+import 'flowbite'
 
 // Day.js
 import dayjs from 'dayjs'
