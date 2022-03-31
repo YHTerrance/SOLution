@@ -176,7 +176,6 @@ describe("SOLution", () => {
 
   it('can fetch all answers', async () => {
     const answerAccounts = await program.account.answer.all();
-    console.log(answerAccounts)
     assert.equal(answerAccounts.length, 2);
   });
 
@@ -227,11 +226,13 @@ describe("SOLution", () => {
               offset: 8 + // Discriminator.
                   32 + // Author public key.
                   8 + // Timestamp.
+                  32 + // Solution public key
                   4, // Topic string prefix.
               bytes: bs58.encode(Buffer.from(testTopic)),
           }
       }
     ]);
+    console.log(questionAccounts)
     assert.equal(questionAccounts.length, 2);
     assert.ok(questionAccounts.every(questionAccount => {
       return questionAccount.account.topic === testTopic

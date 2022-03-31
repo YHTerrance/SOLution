@@ -58,6 +58,7 @@ pub mod so_lution {
 pub struct Question {
     pub author: Pubkey,
     pub timestamp: i64,
+    pub solution: Pubkey,
     pub topic: String,
     pub content: String,
 }
@@ -100,6 +101,7 @@ impl Question {
     const LEN: usize = DISCRIMINATOR_LENGTH
         + PUBLIC_KEY_LENGTH // Author
         + TIMESTAMP_LENGTH // Timestamp
+        + PUBLIC_KEY_LENGTH // Solution
         + STRING_LENGTH_PREFIX + MAX_TOPIC_LENGTH // Topic
         + STRING_LENGTH_PREFIX + MAX_CONTENT_LENGTH; // Content
 }
