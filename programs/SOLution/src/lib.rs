@@ -15,7 +15,7 @@ pub enum ErrorCode {
 pub mod so_lution {
     use super::*;
 
-    pub fn ask_question(ctx: Context<AskQuestion>, tpoic: String, content: String) -> Result<()> {
+    pub fn ask_question(ctx: Context<AskQuestion>, topic: String, content: String) -> Result<()> {
         let question: &mut Account<Question> = &mut ctx.accounts.question;
         let author: &Signer = &ctx.accounts.author;
         let clock: Clock = Clock::get().unwrap();
@@ -36,7 +36,7 @@ pub mod so_lution {
         Ok(())
     }
 
-    pub fn submit_answer(ctx: Context<SubmitAnswer>, target_question: PubKey, content: String) -> Result<()> {
+    pub fn submit_answer(ctx: Context<SubmitAnswer>, target_question: Pubkey, content: String) -> Result<()> {
         let answer: &mut Account<Answer> = &mut ctx.accounts.answer;
         let author: &Signer = &ctx.accounts.author;
         let clock: Clock = Clock::get().unwrap();
@@ -72,7 +72,7 @@ pub struct Answer {
 
 
 #[derive(Accounts)]
-pub struct AskQuestion {
+pub struct AskQuestion<'info> {
     #[account(init, payer = author, space = Question::LEN)]
     pub question: Account<'info, Question>,
     #[account(mut)]
@@ -81,7 +81,7 @@ pub struct AskQuestion {
 }
 
 #[derive(Accounts)]
-pub struct SubmitAnswer {
+pub struct SubmitAnswer<'info> {
     #[account(init, payer = author, space = Answer::LEN)]
     pub answer: Account<'info, Answer>,
     #[account(mut)]
@@ -109,5 +109,5 @@ impl Answer {
         + PUBLIC_KEY_LENGTH // Source question
         + PUBLIC_KEY_LENGTH // Author
         + TIMESTAMP_LENGTH // Timestamp
-        + STRING_LENGTH_PREFIX + MAX_CONTENT_LENGTH // Content
+        + STRING_LENGTH_PREFIX + MAX_CONTENT_LENGTH; // Content
 }
