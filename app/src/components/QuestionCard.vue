@@ -1,11 +1,14 @@
 <script setup>
-import { toRefs, computed } from 'vue'
+import { toRefs, computed, ref } from 'vue'
 import { useWorkspace } from '@/composables'
+import { fetchAnswers, targetQuestionFilter } from '@/api'
+import AnswerList from '@/components/AnswerList.vue'
 
 const props = defineProps({
     question: Object,
 })
 
+// const debug = false
 const { question } = toRefs(props)
 const { wallet } = useWorkspace()
 const authorRoute = computed(() => {
@@ -16,6 +19,14 @@ const authorRoute = computed(() => {
     }
 })
 
+const answers = ref([])
+const loading = ref(true)
+
+fetchAnswers([targetQuestionFilter(question.value.publicKey.toBase58())])
+    .then(fetchedAnswers => answers.value = fetchedAnswers)
+    .finally(() => {
+        loading.value = false
+    })
 
 </script>
 
@@ -32,14 +43,19 @@ const authorRoute = computed(() => {
             <time class="text-gray-500 text-sm" :title="question.created_at">
                 <!-- TODO: Link to the question page. -->
                 <router-link :to="{ name: 'Question', params: { question: question.publicKey.toBase58() } }" class="hover:underline">
-                    {{ question.created_ago }}
+                    {{ question.created_at }}
                 </router-link>
             </time>
         </div>
         <p class="whitespace-pre-wrap" v-text="question.content"></p>
         <!-- TODO: Link to the topic page. -->
-        <router-link v-if="question.topic" :to="{ name: 'Topics', params: { topic: question.topic } }" class="inline-block mt-2 text-pink-500 hover:underline">
+        <router-link v-if="question.topic" :to="{ name: 'Topics', params: { topic: question.topic } }" class="inline-block mt-2 text-pink-500 hover:underline justify-self-start">
             #{{ question.topic }}
         </router-link>
+        <div v-else></div>
+        <div class="flex justify-between">
+
+        </div>
+        <answer-list v-show="answers.length" :answers="answers" :authorRoute="authorRoute"></answer-list>
     </div>
 </template>

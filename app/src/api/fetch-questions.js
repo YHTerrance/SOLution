@@ -25,12 +25,3 @@ export const topicFilter = topic => ({
         bytes: bs58.encode(Buffer.from(topic)),
     }
 })
-
-export const targetQuestionFilter = targetQuestionBase58PublicKey => ({
-    memcmp: {
-        offset: 8 + // Discriminator
-            32 + // Author
-            8, // timestamp
-        bytes: targetQuestionBase58PublicKey,
-    }
-})

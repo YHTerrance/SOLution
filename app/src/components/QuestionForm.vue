@@ -37,7 +37,8 @@ const canQuestion = computed(() => content.value && characterLimit.value > 0)
 // Actions.
 const loading = ref(false)
 const emit = defineEmits(['added', 'failed'])
-const status = ref('success')
+const status = ref('')
+const showToast = ref(false)
 const ask = async () => {
     if (! canQuestion.value) return
     loading.value = true
@@ -45,17 +46,20 @@ const ask = async () => {
     try {
         question = await askQuestion(effectiveTopic.value, content.value)
         status.value = "success"
+        showToast.value = true
         emit('added', question)
     }
     catch (error) {
         console.log(error)
         status.value = "danger"
+        showToast.value = true
         emit('failed', question)
     }
     finally {
         loading.value = false
         topic.value = ''
         content.value = ''
+        setTimeout(() => showToast.value = false, 5000)
     }
 }
 </script>
@@ -122,5 +126,8 @@ const ask = async () => {
         Connect your wallet to start asking questions...
     </div>
 
-    <toast-item class="mx-auto sm:w-3/4 md:w-2/4 fixed inset-x-0 bottom-10" :status="status"></toast-item>
+    <toast-item
+        class="mx-auto sm:w-3/4 md:w-2/4 fixed inset-x-0 bottom-10"
+        :status="status"
+        :show="showToast"></toast-item>
 </template>
