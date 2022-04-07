@@ -3,6 +3,9 @@ import { toRefs, computed, ref } from 'vue'
 import { useWorkspace } from '@/composables'
 import { fetchAnswers, targetQuestionFilter } from '@/api'
 import AnswerList from '@/components/AnswerList.vue'
+import IconHeart from '@/components/atoms/IconHeart.vue'
+import IconComment from '@/components/atoms/IconComment.vue'
+import IconShare from '@/components/atoms/IconShare.vue'
 
 const props = defineProps({
     question: Object,
@@ -53,9 +56,12 @@ fetchAnswers([targetQuestionFilter(question.value.publicKey.toBase58())])
             #{{ question.topic }}
         </router-link>
         <div v-else></div>
-        <div class="flex justify-between">
-
+        <div class="flex justify-between mt-4">
+            <icon-heart class='w-4 h-4 text-pink-500' v-bind:isActive="false"></icon-heart>
+            <icon-comment class="w-4 h-4 text-pink-500" v-bind:isActive="false"></icon-comment>
+            <icon-share class="w-4 h-4 text-pink-500" v-bind:isActive="false"></icon-share>
         </div>
+
         <answer-list v-show="answers.length" :answers="answers" :authorRoute="authorRoute"></answer-list>
     </div>
 </template>
