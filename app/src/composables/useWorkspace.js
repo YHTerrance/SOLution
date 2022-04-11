@@ -5,7 +5,7 @@ import { Provider, Program } from "@project-serum/anchor";
 import idl from "../../../target/idl/so_lution.json";
 
 const preflightCommitment = "processed";
-const commitment = "finalized";
+const commitment = "processed";
 const programID = new PublicKey(idl.metadata.address);
 let workspace = null;
 

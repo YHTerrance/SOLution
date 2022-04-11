@@ -1,20 +1,26 @@
 import { web3 } from "@project-serum/anchor";
 import { useWorkspace } from "@/composables";
 import { Answer } from "@/models";
+import { pollConfirmation } from "./utils";
 
-export const submitAnswer = async (targetQuestionBase58PublicKey, content) => {
-  const { wallet, program } = useWorkspace();
+export const submitAnswer = async (targetQuestionPublicKey, content, ticks) => {
+  const { wallet, program, connection } = useWorkspace();
 
   const answer = web3.Keypair.generate();
 
-  await program.value.rpc.submitAnswer(targetQuestionBase58PublicKey, content, {
-    accounts: {
-      author: wallet.value.publicKey,
-      answer: answer.publicKey,
-      systemProgram: web3.SystemProgram.programId,
-    },
-    signers: [answer],
-  });
+  const signature = await program.value.rpc.submitAnswer(
+    targetQuestionPublicKey,
+    content,
+    {
+      accounts: {
+        author: wallet.value.publicKey,
+        answer: answer.publicKey,
+        systemProgram: web3.SystemProgram.programId,
+      },
+      signers: [answer],
+    }
+  );
+  await pollConfirmation(connection, signature, ticks);
 
   const answerAccount = await program.value.account.answer.fetch(
     answer.publicKey

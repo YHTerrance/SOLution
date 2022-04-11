@@ -2,22 +2,21 @@
 import { toRefs, ref, watch } from "vue";
 
 const props = defineProps({
-  status: String,
-  show: Boolean,
+  res: String,
 });
 
-const { status, show } = toRefs(props);
+const { res } = toRefs(props);
 
-const type = ref("success");
-watch(status, (x) => {
+const type = ref("");
+watch(res, (x) => {
   type.value = x;
 });
 </script>
 
 <template>
   <div
-    v-show="show"
-    class="w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow"
+    v-show="type != ''"
+    class="w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow-lg"
   >
     <div
       v-if="type == 'success'"

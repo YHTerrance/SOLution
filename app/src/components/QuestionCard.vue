@@ -40,6 +40,7 @@ fetchAnswers([targetQuestionFilter(question.value.publicKey.toBase58())])
   .finally(() => {
     loading.value = false;
   });
+const addAnswer = (answer) => answers.value.push(answer);
 </script>
 
 <template>
@@ -51,18 +52,18 @@ fetchAnswers([targetQuestionFilter(question.value.publicKey.toBase58())])
 
     <div class="flex justify-between mt-4">
       <icon-heart
-        class="w-4 h-4 text-pink-500 cursor-pointer"
+        class="w-8 h-8 text-pink-500 cursor-pointer"
         :isActive="liked"
         @click="liked = !liked"
       ></icon-heart>
       <icon-comment
-        class="w-4 h-4 text-pink-500 cursor-pointer"
+        class="w-8 h-8 text-pink-500 cursor-pointer"
         type="button"
         @click="showAnswerModal = true"
         :isActive="false"
       ></icon-comment>
       <icon-share
-        class="w-4 h-4 text-pink-500 cursor-pointer"
+        class="w-8 h-8 text-pink-500 cursor-pointer"
         :isActive="false"
       ></icon-share>
     </div>
@@ -76,6 +77,7 @@ fetchAnswers([targetQuestionFilter(question.value.publicKey.toBase58())])
       :show="showAnswerModal"
       :targetQuestion="question"
       @close="showAnswerModal = false"
+      @added="addAnswer"
     >
       <question-body
         :question="question"

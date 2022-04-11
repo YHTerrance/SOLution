@@ -1,12 +1,13 @@
 <script setup>
 import { toRefs, defineEmits, ref, computed } from "vue";
 import { useAutoresizeTextarea, useCountCharacterLimit } from "@/composables";
-import IconSpinner from "@/components/atoms/IconSpinner.vue";
+import ToastItem from "@/components/atoms/ToastItem.vue";
+import SubmitButton from "@/components/atoms/SubmitButton.vue";
 import { useWallet } from "solana-wallets-vue";
 import { submitAnswer } from "@/api";
 
 function close_modal() {
-  emit("close");
+  if (!loading.value) emit("close");
 }
 const props = defineProps({
   show: Boolean,
@@ -37,30 +38,34 @@ const canSubmit = computed(() => content.value && characterLimit.value > 0);
 // Actions.
 const loading = ref(false);
 const emit = defineEmits(["added", "failed", "close"]);
-const status = ref("");
-const showToast = ref(false);
+const ticks = ref(0); // Record the ticks passed during transaction confirmation
+
+// Toast
+const res = ref("");
+
 const submit = async () => {
   if (!canSubmit.value) return;
   loading.value = true;
   let answer;
   try {
-    targetQuestion.value.publicKey.toBase58();
     answer = await submitAnswer(
-      targetQuestion.value.publicKey.toBase58(),
-      content.value
+      targetQuestion.value.publicKey,
+      content.value,
+      ticks
     );
-    status.value = "success";
-    showToast.value = true;
+    res.value = "success";
     emit("added", answer);
   } catch (error) {
     console.log(error);
-    status.value = "danger";
-    showToast.value = true;
+    res.value = "danger";
     emit("failed", answer);
   } finally {
     loading.value = false;
     content.value = "";
-    setTimeout(() => (showToast.value = false), 5000);
+    console.log(ticks.value);
+    ticks.value = 0;
+    setTimeout(() => (res.value = ""), 5000);
+    close_modal();
   }
 };
 </script>
@@ -96,29 +101,22 @@ const submit = async () => {
             <!-- Character limit. -->
             <div :class="characterLimitColour">{{ characterLimit }} left</div>
             <!-- submit button. -->
-            <button
-              v-if="!loading"
-              class="text-white px-4 py-2 rounded-full font-semibold"
-              :disabled="!canSubmit"
-              :class="
-                canSubmit ? 'bg-pink-500' : 'bg-pink-300 cursor-not-allowed'
-              "
+            <submit-button
+              :loading="loading"
+              :enabled="canSubmit"
+              :ticks="ticks"
               @click="submit"
             >
-              Ask
-            </button>
-            <button
-              v-else
-              type="button"
-              class="inline-flex text-center items-center text-white px-4 py-2 rounded-full font-semibold bg-pink-300 cursor-not-allowed"
-              disabled
-            >
-              <icon-spinner></icon-spinner>
-              Processing...
-            </button>
+              Answer
+            </submit-button>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <toast-item
+    class="mx-auto sm:w-3/4 md:w-2/4 fixed inset-x-0 bottom-10 z-100"
+    :res="res"
+    :show="res != ''"
+  ></toast-item>
 </template>

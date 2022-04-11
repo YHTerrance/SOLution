@@ -5,8 +5,8 @@ import {
   useCountCharacterLimit,
   useSlug,
 } from "@/composables";
-import IconSpinner from "@/components/atoms/IconSpinner.vue";
 import ToastItem from "@/components/atoms/ToastItem.vue";
+import SubmitButton from "@/components/atoms/SubmitButton.vue";
 import { askQuestion } from "@/api";
 import { useWallet } from "solana-wallets-vue";
 
@@ -41,27 +41,27 @@ const canQuestion = computed(() => content.value && characterLimit.value > 0);
 // Actions.
 const loading = ref(false);
 const emit = defineEmits(["added", "failed"]);
-const status = ref("");
-const showToast = ref(false);
+const res = ref("");
+const ticks = ref(0);
+
 const ask = async () => {
   if (!canQuestion.value) return;
   loading.value = true;
   let question;
+  res.value = "";
   try {
-    question = await askQuestion(effectiveTopic.value, content.value);
-    status.value = "success";
-    showToast.value = true;
+    question = await askQuestion(effectiveTopic.value, content.value, ticks);
+    res.value = "success";
     emit("added", question);
   } catch (error) {
     console.log(error);
-    status.value = "danger";
-    showToast.value = true;
+    res.value = "danger";
     emit("failed", question);
   } finally {
     loading.value = false;
     topic.value = "";
     content.value = "";
-    setTimeout(() => (showToast.value = false), 5000);
+    setTimeout(() => (res.value = ""), 5000);
   }
 };
 </script>
@@ -109,27 +109,14 @@ const ask = async () => {
         <div :class="characterLimitColour">{{ characterLimit }} left</div>
 
         <!-- question button. -->
-        <button
-          v-if="!loading"
-          class="text-white px-4 py-2 rounded-full font-semibold"
-          :disabled="!canQuestion"
-          :class="
-            canQuestion ? 'bg-pink-500' : 'bg-pink-300 cursor-not-allowed'
-          "
+        <submit-button
+          :loading="loading"
+          :enabled="canQuestion"
+          :ticks="ticks"
           @click="ask"
         >
           Ask
-        </button>
-        <button
-          v-else
-          type="button"
-          class="inline-flex text-center items-center text-white px-4 py-2 rounded-full font-semibold bg-pink-300 cursor-not-allowed"
-          disabled
-          @click="ask"
-        >
-          <icon-spinner></icon-spinner>
-          Processing...
-        </button>
+        </submit-button>
       </div>
     </div>
   </div>
@@ -140,7 +127,6 @@ const ask = async () => {
 
   <toast-item
     class="mx-auto sm:w-3/4 md:w-2/4 fixed inset-x-0 bottom-10"
-    :status="status"
-    :show="showToast"
+    :res="res"
   ></toast-item>
 </template>

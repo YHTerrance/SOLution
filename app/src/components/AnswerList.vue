@@ -16,7 +16,7 @@ const orderedAnswers = computed(() => {
 <template>
   <div class="mt-6 pl-4 border-l-2 border-pink-100">
     <div v-for="answer in orderedAnswers" :key="answer.key">
-      <div>
+      <div class="py-2">
         <h3 class="inline font-semibold" :title="answer.author">
           <router-link :to="authorRoute" class="hover:underline">
             {{ answer.author_display }}
@@ -26,8 +26,8 @@ const orderedAnswers = computed(() => {
         <time class="text-gray-500 text-sm" :title="answer.created_at">
           {{ answer.created_ago }}
         </time>
+        <p class="whitespace-pre-wrap" v-text="answer.content"></p>
       </div>
-      <p class="whitespace-pre-wrap" v-text="answer.content"></p>
     </div>
   </div>
 </template>
