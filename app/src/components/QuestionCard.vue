@@ -35,6 +35,20 @@ const loading = ref(true);
 const liked = ref(false);
 const showAnswerModal = ref(false);
 
+// Copy destination link to clipboard
+const copyToClipboard = (text) => {
+  var dummy = document.createElement("textarea");
+  // to avoid breaking orgain page when copying more words
+  // cant copy when adding below this code
+  // dummy.style.display = 'none'
+  document.body.appendChild(dummy);
+  //Be careful if you use texarea. setAttribute('value', value), which works with "input" does not work with "textarea". – Eduard
+  dummy.value = text;
+  dummy.select();
+  document.execCommand("copy");
+  document.body.removeChild(dummy);
+};
+
 fetchAnswers([targetQuestionFilter(question.value.publicKey.toBase58())])
   .then((fetchedAnswers) => (answers.value = fetchedAnswers))
   .finally(() => {
@@ -65,6 +79,7 @@ const addAnswer = (answer) => answers.value.push(answer);
       <icon-share
         class="w-8 h-8 text-pink-500 cursor-pointer"
         :isActive="false"
+        @click="copyToClipboard('')"
       ></icon-share>
     </div>
 
