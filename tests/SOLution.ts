@@ -35,7 +35,7 @@ describe("SOLution", () => {
 
   it('can ask a question without a topic', async () => {
     const testTopic = '';
-    const testContent = 'Is pallier encryption some kind of homomomorphic encryption?'
+    const testContent = 'Is pallier encryption some kind of homomorphic encryption?'
 
     const question = anchor.web3.Keypair.generate();
     await program.rpc.askQuestion(testTopic, testContent, {

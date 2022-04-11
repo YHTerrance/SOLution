@@ -1,9 +1,9 @@
 <script setup>
-import { toRefs, computed, ComputedRef } from 'vue'
+import { toRefs, computed } from 'vue'
 
 const props = defineProps({
     answers: Object,
-    authorRoute: ComputedRef
+    authorRoute: Object
 })
 
 const { answers, authorRoute } = toRefs(props)

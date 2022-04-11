@@ -6,6 +6,8 @@ import AnswerList from '@/components/AnswerList.vue'
 import IconHeart from '@/components/atoms/IconHeart.vue'
 import IconComment from '@/components/atoms/IconComment.vue'
 import IconShare from '@/components/atoms/IconShare.vue'
+import AnswerModal from '@/components/AnswerModal.vue'
+import QuestionBody from '@/components/QuestionBody'
 
 const props = defineProps({
     question: Object,
@@ -24,6 +26,8 @@ const authorRoute = computed(() => {
 
 const answers = ref([])
 const loading = ref(true)
+const liked = ref(false)
+const showAnswerModal = ref(false)
 
 fetchAnswers([targetQuestionFilter(question.value.publicKey.toBase58())])
     .then(fetchedAnswers => answers.value = fetchedAnswers)
@@ -35,33 +39,17 @@ fetchAnswers([targetQuestionFilter(question.value.publicKey.toBase58())])
 
 <template>
     <div class="px-8 py-4">
-        <div>
-            <h3 class="inline font-semibold" :title="question.author">
-                <!-- TODO: Link to author page or the profile page if it's our own question. -->
-                <router-link :to="authorRoute" class="hover:underline">
-                    {{ question.author_display }}
-                </router-link>
-            </h3>
-            <span class="text-gray-500"> • </span>
-            <time class="text-gray-500 text-sm" :title="question.created_at">
-                <!-- TODO: Link to the question page. -->
-                <router-link :to="{ name: 'Question', params: { question: question.publicKey.toBase58() } }" class="hover:underline">
-                    {{ question.created_at }}
-                </router-link>
-            </time>
-        </div>
-        <p class="whitespace-pre-wrap" v-text="question.content"></p>
-        <!-- TODO: Link to the topic page. -->
-        <router-link v-if="question.topic" :to="{ name: 'Topics', params: { topic: question.topic } }" class="inline-block mt-2 text-pink-500 hover:underline justify-self-start">
-            #{{ question.topic }}
-        </router-link>
-        <div v-else></div>
+        <question-body :question="question" :authorRoute="authorRoute"></question-body>
+
         <div class="flex justify-between mt-4">
-            <icon-heart class='w-4 h-4 text-pink-500' v-bind:isActive="false"></icon-heart>
-            <icon-comment class="w-4 h-4 text-pink-500" v-bind:isActive="false"></icon-comment>
-            <icon-share class="w-4 h-4 text-pink-500" v-bind:isActive="false"></icon-share>
+            <icon-heart class='w-4 h-4 text-pink-500 cursor-pointer' :isActive="liked" @click="liked = !liked"></icon-heart>
+            <icon-comment class="w-4 h-4 text-pink-500 cursor-pointer" type="button" @click="showAnswerModal = true" :isActive="false"></icon-comment>
+            <icon-share class="w-4 h-4 text-pink-500 cursor-pointer" :isActive="false"></icon-share>
         </div>
 
         <answer-list v-show="answers.length" :answers="answers" :authorRoute="authorRoute"></answer-list>
+        <answer-modal :show="showAnswerModal" :targetQuestion="question" @close="showAnswerModal = false">
+            <question-body :question="question" :authorRoute="authorRoute"></question-body>
+        </answer-modal>
     </div>
 </template>
