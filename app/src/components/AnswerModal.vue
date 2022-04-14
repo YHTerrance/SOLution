@@ -1,5 +1,5 @@
 <script setup>
-import { toRefs, defineEmits, ref, computed } from "vue";
+import { toRefs, ref, computed } from "vue";
 import { useAutoresizeTextarea, useCountCharacterLimit } from "@/composables";
 import SubmitButton from "@/components/atoms/SubmitButton.vue";
 import ToastItem from "@/components/atoms/ToastItem.vue";

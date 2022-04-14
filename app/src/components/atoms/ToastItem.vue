@@ -13,7 +13,6 @@ watch(
 	status,
 	(x) => {
 		_status.value = x;
-		console.log(_status.value.isActive);
 	},
 	{ deep: true }
 );

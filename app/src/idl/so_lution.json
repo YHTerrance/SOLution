@@ -1,0 +1,135 @@
+{
+  "version": "0.1.0",
+  "name": "so_lution",
+  "instructions": [
+    {
+      "name": "askQuestion",
+      "accounts": [
+        {
+          "name": "question",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "author",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "topic",
+          "type": "string"
+        },
+        {
+          "name": "content",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "submitAnswer",
+      "accounts": [
+        {
+          "name": "answer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "author",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "targetQuestion",
+          "type": "publicKey"
+        },
+        {
+          "name": "content",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Question",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "author",
+            "type": "publicKey"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "solution",
+            "type": "publicKey"
+          },
+          {
+            "name": "topic",
+            "type": "string"
+          },
+          {
+            "name": "content",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Answer",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "author",
+            "type": "publicKey"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "targetQuestion",
+            "type": "publicKey"
+          },
+          {
+            "name": "content",
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "TopicTooLong",
+      "msg": "The provided topic should be 50 characters long maximum."
+    },
+    {
+      "code": 6001,
+      "name": "ContentTooLong",
+      "msg": "The provided content should be 280 characters long maximum."
+    }
+  ],
+  "metadata": {
+    "address": "97qP2WfmsqrYwrQ1s5APNQ4RxwrBbmS2v48UzG2cUZnw"
+  }
+}
