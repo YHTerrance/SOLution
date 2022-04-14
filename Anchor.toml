@@ -1,14 +1,20 @@
 [features]
 seeds = false
+
 [programs.localnet]
+so_lution = "97qP2WfmsqrYwrQ1s5APNQ4RxwrBbmS2v48UzG2cUZnw"
+[programs.devnet]
+so_lution = "97qP2WfmsqrYwrQ1s5APNQ4RxwrBbmS2v48UzG2cUZnw"
+[programs.mainnet]
 so_lution = "97qP2WfmsqrYwrQ1s5APNQ4RxwrBbmS2v48UzG2cUZnw"
 
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "/Users/terrance/.config/solana/id.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+copy-idl = "mkdir -p app/src/idl && cp target/idl/so_lution.json app/src/idl/so_lution.json"
