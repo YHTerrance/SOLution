@@ -1,7 +1,8 @@
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useAnchorWallet } from "solana-wallets-vue";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { Provider, Program } from "@project-serum/anchor";
+import { Status } from "@/models";
 import idl from "../../../target/idl/so_lution.json";
 
 const preflightCommitment = "processed";
@@ -21,11 +22,14 @@ export const initWorkspace = () => {
         commitment,
       })
   );
+  const status = ref(new Status());
+
   const program = computed(() => new Program(idl, programID, provider.value));
   workspace = {
     wallet,
     connection,
     provider,
     program,
+    status,
   };
 };
