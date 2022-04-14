@@ -8,15 +8,16 @@ import IconComment from "@/components/atoms/IconComment.vue";
 import IconShare from "@/components/atoms/IconShare.vue";
 import AnswerModal from "@/components/AnswerModal.vue";
 import QuestionBody from "@/components/QuestionBody";
+import ToastItem from "@/components/atoms/ToastItem.vue";
 import { copyUrl } from "./utils/copy.js";
+import { Status } from "@/models";
 
 const props = defineProps({
 	question: Object,
 });
 
-// const debug = false
 const { question } = toRefs(props);
-const { wallet, status } = useWorkspace();
+const { wallet } = useWorkspace();
 const authorRoute = computed(() => {
 	if (
 		wallet.value &&
@@ -43,6 +44,7 @@ fetchAnswers([targetQuestionFilter(question.value.publicKey.toBase58())])
 	});
 const addAnswer = (answer) => answers.value.push(answer);
 
+const status = ref(new Status());
 const copyQuestionUrl = (questionBase58PublicKey) => {
 	let msg = copyUrl(`#/question/${questionBase58PublicKey}`);
 	if (msg[0] == 0) status.value.activate("success", msg[1]);
@@ -93,5 +95,6 @@ const copyQuestionUrl = (questionBase58PublicKey) => {
 				:authorRoute="authorRoute"
 			></question-body>
 		</answer-modal>
+		<toast-item :status="status"></toast-item>
 	</div>
 </template>

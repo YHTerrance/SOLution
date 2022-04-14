@@ -2,8 +2,10 @@
 import { toRefs, defineEmits, ref, computed } from "vue";
 import { useAutoresizeTextarea, useCountCharacterLimit } from "@/composables";
 import SubmitButton from "@/components/atoms/SubmitButton.vue";
+import ToastItem from "@/components/atoms/ToastItem.vue";
 import { useWallet } from "solana-wallets-vue";
 import { submitAnswer } from "@/api";
+import { Status } from "@/models";
 
 function close_modal() {
 	if (!loading.value) emit("close");
@@ -40,7 +42,7 @@ const emit = defineEmits(["added", "failed", "close"]);
 const ticks = ref(0); // Record the ticks passed during transaction confirmation
 
 // Toast
-const res = ref("");
+const status = ref(new Status());
 
 const submit = async () => {
 	if (!canSubmit.value) return;
@@ -52,18 +54,18 @@ const submit = async () => {
 			content.value,
 			ticks
 		);
-		res.value = "success";
+		status.value.activate("success", "Successfully answered question!");
 		emit("added", answer);
 	} catch (error) {
 		console.log(error);
-		res.value = "danger";
+		status.value.activate("danger", "Failed to answer");
 		emit("failed", answer);
 	} finally {
 		loading.value = false;
 		content.value = "";
 		console.log(ticks.value);
 		ticks.value = 0;
-		setTimeout(() => (res.value = ""), 5000);
+		setTimeout(() => status.value.deactivate(), 5000);
 		close_modal();
 	}
 };
@@ -115,4 +117,5 @@ const submit = async () => {
 			</div>
 		</div>
 	</div>
+	<toast-item :status="status"></toast-item>
 </template>

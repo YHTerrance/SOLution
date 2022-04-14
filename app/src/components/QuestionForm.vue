@@ -8,6 +8,8 @@ import {
 import SubmitButton from "@/components/atoms/SubmitButton.vue";
 import { askQuestion } from "@/api";
 import { useWallet } from "solana-wallets-vue";
+import ToastItem from "@/components/atoms/ToastItem.vue";
+import { Status } from "@/models";
 
 // Props.
 const props = defineProps({
@@ -40,31 +42,30 @@ const canQuestion = computed(() => content.value && characterLimit.value > 0);
 // Actions.
 const loading = ref(false);
 const emit = defineEmits(["added", "failed"]);
-const res = ref("");
 const ticks = ref(0);
+const status = ref(new Status());
 
 const ask = async () => {
 	if (!canQuestion.value) return;
 	loading.value = true;
 	let question;
-	res.value = "";
 	try {
 		question = await askQuestion(
 			effectiveTopic.value,
 			content.value,
 			ticks
 		);
-		res.value = "success";
+		status.value.activate("success", "Successfully asked question");
 		emit("added", question);
 	} catch (error) {
 		console.log(error);
-		res.value = "danger";
+		status.value.activate("danger", "Failed to ask question");
 		emit("failed", question);
 	} finally {
 		loading.value = false;
 		topic.value = "";
 		content.value = "";
-		setTimeout(() => (res.value = ""), 5000);
+		setTimeout(() => status.value.deactivate(), 5000);
 	}
 };
 </script>
@@ -126,6 +127,7 @@ const ask = async () => {
 				</submit-button>
 			</div>
 		</div>
+		<toast-item :status="status"></toast-item>
 	</div>
 
 	<div v-else class="px-8 py-4 bg-gray-50 text-gray-500 text-center border-b">
