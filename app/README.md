@@ -1,5 +1,9 @@
 # SOLution VueJS app
 
+[![code-style-prettier][code-style-prettier-image]][code-style-prettier-url]
+[code-style-prettier-image]: https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square
+[code-style-prettier-url]: https://github.com/prettier/prettier
+
 ## Useful documentation
 
 -   [Tailwind](https://tailwindcss.com/docs/installation)
