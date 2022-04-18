@@ -15,8 +15,7 @@ phases:
     commands:
       - echo "Building VueJS app"
       - yarn run build:devnet
-      - zip -r dist.zip dist
 
 artifacts:
   files:
-    - app/dist/*
+    - app/dist
