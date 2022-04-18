@@ -18,4 +18,5 @@ phases:
 
 artifacts:
   files:
-    - app/dist
+    - "**/*"
+  base-directory: "app/dist"
