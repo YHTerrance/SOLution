@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - npm i yarn@latest -g
+      - pip install --upgrade pip
+      - pip install --upgrade awscli
+  pre_build:
+    commands:
+      - echo Pre_build Phase
+      - yarn
+  build:
+    commands:
+      - echo Build Phase
+      - yarn run build:devnet
+  post_build:
+    commands:
+      - echo PostBuild Phase
+      - aws s3 sync ./dist $S3_BUCKET
