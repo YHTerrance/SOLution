@@ -1,6 +1,13 @@
 # SOLution
 
-Developed and based on the fantastic tutorial created by Loris: [Link](https://lorisleiva.com/create-a-solana-dapp-from-scratch)
+# Important !!
+
+When developing this project, please follow the following best practice.
+
+* Backend (Smart Contract): Should follow the test-driven approach. Make sure all the tests pass.
+* Frontend: If you are unfamiliar with Vue, follow this [tutorial](https://vuejs.org/tutorial/#step-1). Note that the project us developed using **composition** and **SFC**.
+
+Main reference tutorial: [Link](https://lorisleiva.com/create-a-solana-dapp-from-scratch)
 
 [Demo Link](http://solution-solana-webapp.s3-website-us-west-2.amazonaws.com/#/)
 
