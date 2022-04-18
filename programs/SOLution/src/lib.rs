@@ -35,6 +35,23 @@ pub mod so_lution {
     Ok(())
   }
 
+  pub fn update_question(ctx: Context<UpdateQuestion>, topic: String, content: String) -> Result<()> {
+    let question: &mut Account<Question> = &mut ctx.accounts.question;
+
+    if topic.chars().count() > 50 {
+      return Err(ErrorCode::TopicTooLong.into());
+    }
+
+    if content.chars().count() > 280 {
+      return Err(ErrorCode::ContentTooLong.into());
+    }
+
+    question.topic = topic;
+    question.content = content;
+
+    Ok(())
+  }
+
   pub fn submit_answer(
     ctx: Context<SubmitAnswer>,
     target_question: Pubkey,
@@ -81,6 +98,14 @@ pub struct AskQuestion<'info> {
   #[account(mut)]
   pub author: Signer<'info>,
   pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct UpdateQuestion<'info> {
+  // has_one: checks that the author in question is similar to the current question
+  #[account(mut, has_one = author)]
+  pub question: Account<'info, Question>,
+  pub author: Signer<'info>,
 }
 
 #[derive(Accounts)]
