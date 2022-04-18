@@ -1,5 +1,6 @@
 # SOLution
 
+Developed and based on the fantastic tutorial created by Loris: [link](https://lorisleiva.com/create-a-solana-dapp-from-scratch)
 [Demo Link](http://solution-solana-webapp.s3-website-us-west-2.amazonaws.com/#/)
 
 ## Project Structure
