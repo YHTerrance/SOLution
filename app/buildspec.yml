@@ -8,13 +8,14 @@ phases:
       - pip install --upgrade awscli
   pre_build:
     commands:
+      - cd app
       - echo "Installing dependencies"
-      - cd app && yarn
+      - yarn
   build:
     commands:
       - echo "Building VueJS app"
-      - cd app && yarn run build:devnet
+      - yarn run build:devnet
   post_build:
     commands:
       - echo "Uploading to S3 bucket"
-      - cd app && aws s3 sync ./dist $S3_BUCKET
+      - aws s3 sync ./dist $S3_BUCKET
