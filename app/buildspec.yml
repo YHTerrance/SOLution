@@ -19,4 +19,4 @@ phases:
 
 artifacts:
   files:
-    - app/dist.zip
+    - app/dist/*
