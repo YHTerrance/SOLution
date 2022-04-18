@@ -15,7 +15,3 @@ phases:
     commands:
       - echo "Building VueJS app"
       - yarn run build:devnet
-  post_build:
-    commands:
-      - echo "Uploading to S3 bucket"
-      - aws s3 sync ./dist $S3_BUCKET
