@@ -33,7 +33,7 @@ const emit = defineEmits(["click"]);
     class="inline-flex text-center items-center text-white px-4 py-2 rounded-full font-semibold bg-pink-300 cursor-not-allowed"
     disabled
   >
-    <icon-spinner></icon-spinner>
+    <icon-spinner class="mr-3 inline"></icon-spinner>
     Loading...
   </button>
   <button
@@ -42,7 +42,7 @@ const emit = defineEmits(["click"]);
     class="inline-flex text-center items-center text-white px-4 py-2 rounded-full font-semibold bg-green-300 cursor-not-allowed"
     disabled
   >
-    <icon-spinner></icon-spinner>
+    <icon-spinner class="mr-3 inline text-white"></icon-spinner>
     Almost done...
   </button>
 </template>

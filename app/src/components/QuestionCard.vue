@@ -1,7 +1,9 @@
 <script setup>
 import { toRefs, computed, ref } from "vue";
 import { useWorkspace } from "@/composables";
-import { fetchAnswers, targetQuestionFilter } from "@/api";
+import { fetchAnswers, targetQuestionFilter, deleteQuestion } from "@/api";
+import { copyUrl } from "./utils/copy.js";
+import { Status } from "@/models";
 import AnswerList from "@/components/AnswerList.vue";
 import IconHeart from "@/components/atoms/IconHeart.vue";
 import IconComment from "@/components/atoms/IconComment.vue";
@@ -10,8 +12,6 @@ import AnswerModal from "@/components/AnswerModal.vue";
 import QuestionBody from "@/components/QuestionBody";
 import ToastItem from "@/components/atoms/ToastItem.vue";
 import QuestionFormUpdate from "@/components/QuestionFormUpdate.vue";
-import { copyUrl } from "./utils/copy.js";
-import { Status } from "@/models";
 
 const props = defineProps({
   question: Object,
@@ -39,6 +39,31 @@ const authorRoute = computed(() => {
   }
 });
 
+// Actions.
+const emit = defineEmits(["delete", "fail"]);
+
+const status = ref(new Status());
+
+// Delete function
+const ticks_delete = ref(0);
+const loading_delete = ref(false);
+
+const onDelete = async () => {
+  console.log("Deleting question");
+  loading_delete.value = true;
+  try {
+    await deleteQuestion(question.value, ticks_delete);
+    emit("delete", question.value);
+  } catch (error) {
+    console.log(error);
+    status.value.activate("danger", "Failed to delete question");
+  } finally {
+    loading_delete.value = false;
+    setTimeout(() => status.value.deactivate(), 5000);
+  }
+};
+
+// Fetch answers at start
 fetchAnswers([targetQuestionFilter(question.value.publicKey.toBase58())])
   .then((fetchedAnswers) => (answers.value = fetchedAnswers))
   .finally(() => {
@@ -46,7 +71,6 @@ fetchAnswers([targetQuestionFilter(question.value.publicKey.toBase58())])
   });
 const addAnswer = (answer) => answers.value.push(answer);
 
-const status = ref(new Status());
 const copyQuestionUrl = (questionBase58PublicKey) => {
   let msg = copyUrl(`#/question/${questionBase58PublicKey}`);
   if (msg[0] == 0) status.value.activate("success", msg[1]);
@@ -67,6 +91,9 @@ const copyQuestionUrl = (questionBase58PublicKey) => {
       :question="question"
       :authorRoute="authorRoute"
       :isMyQuestion="isMyQuestion"
+      :onDelete="onDelete"
+      :loading_delete="loading_delete"
+      :ticks_delete="ticks_delete"
       @edit="isEditing = true"
     ></question-body>
     <div class="flex justify-between mt-4">

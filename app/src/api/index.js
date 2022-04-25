@@ -4,3 +4,4 @@ export * from "./ask-question";
 export * from "./fetch-answers";
 export * from "./submit-answer";
 export * from "./update-question";
+export * from "./delete-question";

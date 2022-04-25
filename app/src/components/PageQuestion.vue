@@ -28,5 +28,9 @@ watchEffect(async () => {
   <div v-else-if="!question" class="p-8 text-gray-500 text-center">
     Question not found
   </div>
-  <question-card v-else :question="question"></question-card>
+  <question-card
+    v-else
+    :question="question"
+    @delete="$router.push({ name: 'Home' })"
+  ></question-card>
 </template>

@@ -24,9 +24,7 @@ const fetchTopicQuestions = async () => {
   if (slugTopic.value === viewedTopic.value) return;
   try {
     loading.value = true;
-    const fetchedQuestions = await fetchQuestions([
-      topicFilter(slugTopic.value),
-    ]);
+    const fetchedQuestions = await fetchQuestions([topicFilter(slugTopic.value)]);
     questions.value = fetchedQuestions;
     viewedTopic.value = slugTopic.value;
   } finally {
@@ -72,11 +70,8 @@ useFromRoute((route) => {
     </template>
   </question-search>
   <div v-if="viewedTopic">
-    <question-form
-      @added="addQuestion"
-      :forced-topic="viewedTopic"
-    ></question-form>
-    <question-list :questions="questions" :loading="loading"></question-list>
+    <question-form @added="addQuestion" :forced-topic="viewedTopic"></question-form>
+    <question-list v-model:questions="questions" :loading="loading"></question-list>
     <div v-if="questions.length === 0" class="p-8 text-gray-500 text-center">
       No questions were found in this topic...
     </div>
