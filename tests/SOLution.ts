@@ -354,4 +354,49 @@ describe("SOLution", () => {
       assert.equal(tweetAccount.content, content);
     }
   });
+
+  it("can delete a question", async () => {
+    const author = program.provider.wallet.publicKey;
+    const question = await askQuestion(
+      author,
+      "babydoge",
+      "babydoge dodo do do do do"
+    );
+
+    await program.rpc.deleteQuestion({
+      accounts: {
+        question: question.publicKey,
+        author,
+      },
+    });
+
+    // Ensure that fetcing the question account returns NULL
+    const questionAccount = await program.account.question.fetchNullable(
+      question.publicKey
+    );
+    assert.ok(questionAccount === null);
+  });
+
+  it("cannot delete delete someone else's question", async () => {
+    const topic = "topic";
+    const content = "content";
+    const author = program.provider.wallet.publicKey;
+    const question = await askQuestion(author, topic, content);
+
+    try {
+      await program.rpc.deleteQuestion({
+        accounts: {
+          question: question.publicKey,
+          author: anchor.web3.Keypair.generate().publicKey,
+        },
+      });
+      assert.fail("We were able to delete someone else's question");
+    } catch (error) {
+      const questionAccount = await program.account.question.fetch(
+        question.publicKey
+      );
+      assert.equal(questionAccount.topic, topic);
+      assert.equal(questionAccount.content, content);
+    }
+  });
 });

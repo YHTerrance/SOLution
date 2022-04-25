@@ -52,6 +52,10 @@ pub mod so_lution {
     Ok(())
   }
 
+  pub fn delete_question(_ctx: Context<DeleteQuestion>) -> Result<()> {
+    Ok(())
+  }
+
   pub fn submit_answer(
     ctx: Context<SubmitAnswer>,
     target_question: Pubkey,
@@ -73,6 +77,7 @@ pub mod so_lution {
     Ok(())
   }
 }
+
 
 #[account]
 pub struct Question {
@@ -109,6 +114,14 @@ pub struct UpdateQuestion<'info> {
 }
 
 #[derive(Accounts)]
+pub struct DeleteQuestion<'info> {
+  #[account(mut, has_one = author, close = author)]
+  // has_one: only allows author to do this | close: transfers the lamports to author after closing the account
+  pub question: Account<'info, Question>,
+  pub author: Signer<'info>,
+}
+
+#[derive(Accounts)]
 pub struct SubmitAnswer<'info> {
   #[account(init, payer = author, space = Answer::LEN)]
   pub answer: Account<'info, Answer>,
@@ -116,6 +129,7 @@ pub struct SubmitAnswer<'info> {
   pub author: Signer<'info>,
   pub system_program: Program<'info, System>,
 }
+
 
 const DISCRIMINATOR_LENGTH: usize = 8;
 const PUBLIC_KEY_LENGTH: usize = 32;
