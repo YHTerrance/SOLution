@@ -24,6 +24,20 @@ describe("SOLution", () => {
     return question;
   };
 
+  // Function that wraps the logic of submitting answers
+  const submitAnswer = async (author, targetQuestion, content) => {
+    const answer = anchor.web3.Keypair.generate();
+    await program.rpc.submitAnswer(targetQuestion.publicKey, content, {
+      accounts: {
+        answer: answer.publicKey,
+        author,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      },
+      signers: [answer],
+    });
+    return answer;
+  };
+
   it("can ask a question", async () => {
     const testTopic = "cns";
     const testContent = "Can anyone explain what is homomorphic encryption?";
@@ -299,10 +313,12 @@ describe("SOLution", () => {
     );
   });
 
-  it("can update a question", async () => {
+  it("can update a question and its answer", async () => {
     const topic = "babydoge";
     const content = "to the moon or not?";
     const author = program.provider.wallet.publicKey;
+
+    // Create question and an answer under the question
     const question = await askQuestion(author, topic, content);
     const questionAccount = await program.account.question.fetch(
       question.publicKey
@@ -311,9 +327,14 @@ describe("SOLution", () => {
     assert.equal(questionAccount.topic, topic);
     assert.equal(questionAccount.content, content);
 
+    const answer = await submitAnswer(author, question, content);
+    const answerAccount = await program.account.answer.fetch(answer.publicKey);
+    assert.equal(answerAccount.content, content);
+
     const new_topic = "shiba inu";
     const new_content = "to mars <3";
 
+    // Update question
     await program.rpc.updateQuestion(new_topic, new_content, {
       accounts: {
         question: question.publicKey,
@@ -326,13 +347,27 @@ describe("SOLution", () => {
     );
     assert.equal(updatedQuestionAccount.topic, new_topic);
     assert.equal(updatedQuestionAccount.content, new_content);
+
+    // Update Answer
+    await program.rpc.updateAnswer(new_content, {
+      accounts: {
+        answer: answer.publicKey,
+        author,
+      },
+    });
+
+    const updatedAnswerAccount = await program.account.answer.fetch(
+      answer.publicKey
+    );
+    assert.equal(updatedAnswerAccount.content, new_content);
   });
 
-  it("cannot update someone else's question", async () => {
+  it("cannot update someone else's question or answer", async () => {
     const topic = "fantom";
     const content = "Fantom is wonderful";
     const author = program.provider.wallet.publicKey;
     const question = await askQuestion(author, topic, content);
+    const answer = await submitAnswer(author, question, content);
 
     try {
       await program.rpc.updateQuestion(
@@ -345,23 +380,51 @@ describe("SOLution", () => {
           },
         }
       );
-      assert.fail("We were able to update someone else's tweet.");
+      assert.fail("We were able to update someone else's question.");
     } catch (error) {
-      const tweetAccount = await program.account.question.fetch(
+      const questionAccount = await program.account.question.fetch(
         question.publicKey
       );
-      assert.equal(tweetAccount.topic, topic);
-      assert.equal(tweetAccount.content, content);
+      assert.equal(questionAccount.topic, topic);
+      assert.equal(questionAccount.content, content);
+    }
+
+    try {
+      await program.rpc.updateAnswer("solana as in on Solana beach", {
+        accounts: {
+          answer: answer.publicKey,
+          author: anchor.web3.Keypair.generate().publicKey,
+        },
+      });
+      assert.fail("We were able to update someone else's answer");
+    } catch (error) {
+      const answerAccount = await program.account.answer.fetch(
+        answer.publicKey
+      );
+      assert.equal(answerAccount.content, content);
     }
   });
 
-  it("can delete a question", async () => {
+  it("can delete an answer and a question respectively", async () => {
     const author = program.provider.wallet.publicKey;
     const question = await askQuestion(
       author,
       "babydoge",
       "babydoge dodo do do do do"
     );
+
+    const answer = await submitAnswer(
+      author,
+      question,
+      "babydoge dodo do do do do"
+    );
+
+    await program.rpc.deleteAnswer({
+      accounts: {
+        answer: answer.publicKey,
+        author,
+      },
+    });
 
     await program.rpc.deleteQuestion({
       accounts: {
@@ -370,18 +433,39 @@ describe("SOLution", () => {
       },
     });
 
-    // Ensure that fetcing the question account returns NULL
+    // Ensure that fetcing the question and answer account returns NULL
     const questionAccount = await program.account.question.fetchNullable(
       question.publicKey
     );
+    const answerAccount = await program.account.answer.fetchNullable(
+      answer.publicKey
+    );
+
     assert.ok(questionAccount === null);
+    assert.ok(answerAccount === null);
   });
 
-  it("cannot delete delete someone else's question", async () => {
+  it("cannot delete delete someone else's question and answer", async () => {
     const topic = "topic";
     const content = "content";
     const author = program.provider.wallet.publicKey;
     const question = await askQuestion(author, topic, content);
+    const answer = await submitAnswer(author, question, content);
+
+    try {
+      await program.rpc.deleteAnswer({
+        accounts: {
+          answer: answer.publicKey,
+          author: anchor.web3.Keypair.generate().publicKey,
+        },
+      });
+      assert.fail("We were able to delete someone else's answer");
+    } catch (error) {
+      const answerAccount = await program.account.answer.fetch(
+        answer.publicKey
+      );
+      assert.equal(answerAccount.content, content);
+    }
 
     try {
       await program.rpc.deleteQuestion({

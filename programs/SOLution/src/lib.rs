@@ -76,6 +76,22 @@ pub mod so_lution {
 
     Ok(())
   }
+
+  pub fn update_answer(ctx: Context<UpdateAnswer>, content: String) -> Result<()> {
+    let answer: &mut Account<Answer> = &mut ctx.accounts.answer;
+
+    if content.chars().count() > 280 {
+      return Err(ErrorCode::ContentTooLong.into())
+    }
+
+    answer.content = content;
+
+    Ok(())
+  }
+
+  pub fn delete_answer(_ctx: Context<DeleteAnswer>) -> Result<()> {
+    Ok(())
+  }
 }
 
 
@@ -130,6 +146,19 @@ pub struct SubmitAnswer<'info> {
   pub system_program: Program<'info, System>,
 }
 
+#[derive(Accounts)]
+pub struct UpdateAnswer<'info> {
+  #[account(mut, has_one = author)]
+  pub answer: Account<'info, Answer>,
+  pub author: Signer<'info>
+}
+
+#[derive(Accounts)]
+pub struct DeleteAnswer<'info> {
+  #[account(mut, has_one = author, close = author)]
+  pub answer: Account<'info, Answer>,
+  pub author: Signer<'info>,
+}
 
 const DISCRIMINATOR_LENGTH: usize = 8;
 const PUBLIC_KEY_LENGTH: usize = 32;
