@@ -1,4 +1,5 @@
 use anchor_lang::prelude::*;
+use anchor_lang::solana_program::system_program;
 
 declare_id!("97qP2WfmsqrYwrQ1s5APNQ4RxwrBbmS2v48UzG2cUZnw");
 
@@ -59,6 +60,7 @@ pub mod so_lution {
   pub fn submit_answer(
     ctx: Context<SubmitAnswer>,
     target_question: Pubkey,
+    target_author: Pubkey,
     content: String,
   ) -> Result<()> {
     let answer: &mut Account<Answer> = &mut ctx.accounts.answer;
@@ -71,6 +73,7 @@ pub mod so_lution {
 
     answer.author = *author.key;
     answer.target_question = target_question;
+    answer.target_author = target_author;
     answer.timestamp = clock.unix_timestamp;
     answer.content = content;
 
@@ -109,6 +112,7 @@ pub struct Answer {
   pub author: Pubkey,
   pub timestamp: i64,
   pub target_question: Pubkey,
+  pub target_author: Pubkey,
   pub content: String,
 }
 
@@ -155,7 +159,7 @@ pub struct UpdateAnswer<'info> {
 
 #[derive(Accounts)]
 pub struct DeleteAnswer<'info> {
-  #[account(mut, has_one = author, close = author)]
+  #[account(mut, constraint = (answer.author == author.key() || answer.target_author == author.key()), close = author)]
   pub answer: Account<'info, Answer>,
   pub author: Signer<'info>,
 }
@@ -179,6 +183,7 @@ impl Question {
 impl Answer {
   const LEN: usize = DISCRIMINATOR_LENGTH
         + PUBLIC_KEY_LENGTH // Source question
+        + PUBLIC_KEY_LENGTH // Source question author
         + PUBLIC_KEY_LENGTH // Author
         + TIMESTAMP_LENGTH // Timestamp
         + STRING_LENGTH_PREFIX + MAX_CONTENT_LENGTH; // Content
