@@ -117,7 +117,7 @@ const copyQuestionUrl = (questionBase58PublicKey) => {
 
     <answer-list
       v-show="answers.length"
-      :answers="answers"
+      v-model:answers="answers"
       :authorRoute="authorRoute"
     ></answer-list>
     <answer-modal

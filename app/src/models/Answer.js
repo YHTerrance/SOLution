@@ -6,6 +6,7 @@ export class Answer {
     this.author = accountData.author;
     this.timestamp = accountData.timestamp.toString();
     this.targetQuestion = accountData.targetQuestion;
+    this.targetAuthor = accountData.targetAuthor;
     this.content = accountData.content;
   }
 
