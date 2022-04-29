@@ -13,7 +13,8 @@ describe("SOLution", () => {
   // Function that wraps the logic of asking questions
   const askQuestion = async (author, topic, content) => {
     const question = anchor.web3.Keypair.generate();
-    const signers = (author == program.provider.wallet) ? [question] : [question, author]
+    const signers =
+      author == program.provider.wallet ? [question] : [question, author];
 
     await program.rpc.askQuestion(topic, content, {
       accounts: {
@@ -27,9 +28,15 @@ describe("SOLution", () => {
   };
 
   // Function that wraps the logic of submitting answers
-  const submitAnswer = async (author, targetQuestion, targetAuthor, content) => {
+  const submitAnswer = async (
+    author,
+    targetQuestion,
+    targetAuthor,
+    content
+  ) => {
     const answer = anchor.web3.Keypair.generate();
-    const signers = (author == program.provider.wallet) ? [answer] : [answer, author]
+    const signers =
+      author == program.provider.wallet ? [answer] : [answer, author];
 
     await program.rpc.submitAnswer(targetQuestion, targetAuthor, content, {
       accounts: {
@@ -46,7 +53,11 @@ describe("SOLution", () => {
     const testTopic = "cns";
     const testContent = "Can anyone explain what is homomorphic encryption?";
 
-    const question = await askQuestion(program.provider.wallet, testTopic, testContent)
+    const question = await askQuestion(
+      program.provider.wallet,
+      testTopic,
+      testContent
+    );
 
     const questionAccount = await program.account.question.fetch(
       question.publicKey
@@ -66,7 +77,11 @@ describe("SOLution", () => {
     const testContent =
       "Is pallier encryption some kind of homomorphic encryption?";
 
-    const question = await askQuestion(program.provider.wallet, testTopic, testContent)
+    const question = await askQuestion(
+      program.provider.wallet,
+      testTopic,
+      testContent
+    );
     const questionAccount = await program.account.question.fetch(
       question.publicKey
     );
@@ -85,7 +100,6 @@ describe("SOLution", () => {
     const testContent =
       "Why does impermanent loss happen in AMMs like Uniswap? (Oops i thought this was defi)";
 
-
     const otherUser = anchor.web3.Keypair.generate();
     const signature = await program.provider.connection.requestAirdrop(
       otherUser.publicKey,
@@ -93,7 +107,7 @@ describe("SOLution", () => {
     );
     await program.provider.connection.confirmTransaction(signature);
 
-    const question = await askQuestion(otherUser, testTopic, testContent)
+    const question = await askQuestion(otherUser, testTopic, testContent);
 
     const questionAccount = await program.account.question.fetch(
       question.publicKey
@@ -111,10 +125,13 @@ describe("SOLution", () => {
   it("cannot provide a topic with more than 50 characters", async () => {
     try {
       const topicWith51Chars = "x".repeat(51);
-      const testContent = "Hummus, am I right?"
+      const testContent = "Hummus, am I right?";
 
-      const question = await askQuestion(program.provider.wallet, topicWith51Chars, testContent)
-
+      const question = await askQuestion(
+        program.provider.wallet,
+        topicWith51Chars,
+        testContent
+      );
     } catch (error) {
       assert.equal(
         error.msg,
@@ -130,8 +147,12 @@ describe("SOLution", () => {
   it("cannot provide a content with more than 280 characters", async () => {
     try {
       const contentWith281Chars = "x".repeat(281);
-      const testTopic = "veganism"
-      const question = await askQuestion(program.provider.wallet, testTopic, contentWith281Chars);
+      const testTopic = "veganism";
+      const question = await askQuestion(
+        program.provider.wallet,
+        testTopic,
+        contentWith281Chars
+      );
     } catch (error) {
       assert.equal(
         error.msg,
@@ -154,7 +175,12 @@ describe("SOLution", () => {
     const testContent =
       "Homomorphic encryption satisfies the following simple formula: D(E(x1) * E(x2)) = x1 + x2";
     const questionAccounts = await program.account.question.all();
-    const answer = await submitAnswer(program.provider.wallet, questionAccounts[0].publicKey, questionAccounts[0].account.author, testContent)
+    const answer = await submitAnswer(
+      program.provider.wallet,
+      questionAccounts[0].publicKey,
+      questionAccounts[0].account.author,
+      testContent
+    );
     const answerAccount = await program.account.answer.fetch(answer.publicKey);
 
     assert.equal(
@@ -181,7 +207,12 @@ describe("SOLution", () => {
 
     const questionAccounts = await program.account.question.all();
 
-    const answer = await submitAnswer(otherUser, questionAccounts[1].publicKey, questionAccounts[1].account.author,testContent)
+    const answer = await submitAnswer(
+      otherUser,
+      questionAccounts[1].publicKey,
+      questionAccounts[1].account.author,
+      testContent
+    );
     const answerAccount = await program.account.answer.fetch(answer.publicKey);
 
     assert.equal(
@@ -276,7 +307,12 @@ describe("SOLution", () => {
     assert.equal(questionAccount.topic, topic);
     assert.equal(questionAccount.content, content);
 
-    const answer = await submitAnswer(author, question.publicKey, questionAccount.author, content);
+    const answer = await submitAnswer(
+      author,
+      question.publicKey,
+      questionAccount.author,
+      content
+    );
     const answerAccount = await program.account.answer.fetch(answer.publicKey);
     assert.equal(answerAccount.content, content);
 
@@ -317,7 +353,12 @@ describe("SOLution", () => {
     const content = "Fantom is wonderful";
     const author = program.provider.wallet;
     const question = await askQuestion(author, topic, content);
-    const answer = await submitAnswer(author, question.publicKey, author.publicKey, content);
+    const answer = await submitAnswer(
+      author,
+      question.publicKey,
+      author.publicKey,
+      content
+    );
 
     try {
       await program.rpc.updateQuestion(
@@ -374,6 +415,7 @@ describe("SOLution", () => {
       accounts: {
         answer: answer.publicKey,
         author: author.publicKey,
+        receiver: author.publicKey,
       },
     });
 
@@ -405,7 +447,7 @@ describe("SOLution", () => {
     );
 
     // Create answer as another person
-    const otherUser = anchor.web3.Keypair.generate()
+    const otherUser = anchor.web3.Keypair.generate();
     const signature = await program.provider.connection.requestAirdrop(
       otherUser.publicKey,
       10000000000
@@ -423,6 +465,7 @@ describe("SOLution", () => {
       accounts: {
         answer: answer.publicKey,
         author: author.publicKey,
+        receiver: otherUser.publicKey,
       },
     });
 
@@ -445,19 +488,25 @@ describe("SOLution", () => {
     assert.ok(answerAccount === null);
   });
 
-
   it("cannot delete delete someone else's question and answer", async () => {
     const topic = "topic";
     const content = "content";
     const author = program.provider.wallet;
     const question = await askQuestion(author, topic, content);
-    const answer = await submitAnswer(author, question.publicKey, author.publicKey, content);
+    const answer = await submitAnswer(
+      author,
+      question.publicKey,
+      author.publicKey,
+      content
+    );
 
     try {
+      const otherUser = anchor.web3.Keypair.generate();
       await program.rpc.deleteAnswer({
         accounts: {
           answer: answer.publicKey,
-          author: anchor.web3.Keypair.generate().publicKey,
+          author: otherUser.publicKey,
+          receiver: author.publicKey,
         },
       });
       assert.fail("We were able to delete someone else's answer");
