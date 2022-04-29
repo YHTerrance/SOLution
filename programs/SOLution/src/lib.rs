@@ -1,5 +1,4 @@
 use anchor_lang::prelude::*;
-use anchor_lang::solana_program::system_program;
 
 declare_id!("97qP2WfmsqrYwrQ1s5APNQ4RxwrBbmS2v48UzG2cUZnw");
 
@@ -159,9 +158,11 @@ pub struct UpdateAnswer<'info> {
 
 #[derive(Accounts)]
 pub struct DeleteAnswer<'info> {
-  #[account(mut, constraint = (answer.author == author.key() || answer.target_author == author.key()), close = author)]
+  #[account(mut, constraint = (answer.author == author.key() || answer.target_author == author.key()) && answer.author == receiver.key(), close = receiver)]
   pub answer: Account<'info, Answer>,
   pub author: Signer<'info>,
+  #[account(mut)]
+  pub receiver: SystemAccount<'info>,
 }
 
 const DISCRIMINATOR_LENGTH: usize = 8;
