@@ -67,7 +67,7 @@ useFromRoute((route) => {
     </template>
   </question-search>
   <div v-if="viewedAuthor">
-    <question-list :questions="questions" :loading="loading"></question-list>
+    <question-list v-model:questions="questions" :loading="loading"></question-list>
     <div v-if="questions.length === 0" class="p-8 text-gray-500 text-center">
       User not found...
     </div>

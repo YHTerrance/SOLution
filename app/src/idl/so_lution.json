@@ -33,6 +33,47 @@
       ]
     },
     {
+      "name": "updateQuestion",
+      "accounts": [
+        {
+          "name": "question",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "author",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "topic",
+          "type": "string"
+        },
+        {
+          "name": "content",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "deleteQuestion",
+      "accounts": [
+        {
+          "name": "question",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "author",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "submitAnswer",
       "accounts": [
         {
@@ -57,10 +98,56 @@
           "type": "publicKey"
         },
         {
+          "name": "targetAuthor",
+          "type": "publicKey"
+        },
+        {
           "name": "content",
           "type": "string"
         }
       ]
+    },
+    {
+      "name": "updateAnswer",
+      "accounts": [
+        {
+          "name": "answer",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "author",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "content",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "deleteAnswer",
+      "accounts": [
+        {
+          "name": "answer",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "author",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "receiver",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -107,6 +194,10 @@
           },
           {
             "name": "targetQuestion",
+            "type": "publicKey"
+          },
+          {
+            "name": "targetAuthor",
             "type": "publicKey"
           },
           {

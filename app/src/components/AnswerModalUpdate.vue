@@ -4,21 +4,14 @@ import { useAutoresizeTextarea, useCountCharacterLimit } from "@/composables";
 import SubmitButton from "@/components/atoms/SubmitButton.vue";
 import ToastItem from "@/components/atoms/ToastItem.vue";
 import { useWallet } from "solana-wallets-vue";
-import { submitAnswer } from "@/api";
+import { updateAnswer } from "@/api";
 import { Status } from "@/models";
-
-function close_modal() {
-  if (!loading.value) emit("close");
-}
 const props = defineProps({
-  show: Boolean,
-  targetQuestion: Object,
+  answer: Object,
 });
 
-const { show, targetQuestion } = toRefs(props);
-
-// Form data.
-const content = ref("");
+const { answer } = toRefs(props);
+const content = ref(answer.value.content);
 
 // Auto-resize the content's textarea.
 const textarea = ref();
@@ -26,35 +19,35 @@ useAutoresizeTextarea(textarea);
 
 // Character limit / count-down.
 const characterLimit = useCountCharacterLimit(content, 280);
+
 const characterLimitColour = computed(() => {
   if (characterLimit.value < 0) return "text-red-500";
   if (characterLimit.value <= 10) return "text-yellow-500";
   return "text-gray-400";
 });
 
+const close_modal = () => {
+  if (!loading.value) emit("close");
+};
+
 // Permissions.
 const { connected } = useWallet();
-const canSubmit = computed(() => content.value && characterLimit.value > 0);
+const canUpdate = computed(() => content.value && characterLimit.value > 0);
 
 // Actions.
 const loading = ref(false);
 const emit = defineEmits(["added", "failed", "close"]);
-const ticks = ref(0); // Record the ticks passed during transaction confirmation
 
 // Toast
 const status = ref(new Status());
 
-const submit = async () => {
-  if (!canSubmit.value) return;
+const update = async () => {
+  if (!canUpdate.value) return;
   loading.value = true;
-  let answer;
   try {
-    answer = await submitAnswer(
-      targetQuestion.value.publicKey,
-      targetQuestion.value.author,
-      content.value,
-      ticks
-    );
+    let _answer = await updateAnswer(answer.value, content.value);
+    // Update content of parent prop
+    answer.value.content = _answer.content;
     status.value.activate("success", "Successfully answered question!");
     emit("added", answer);
   } catch (error) {
@@ -64,8 +57,6 @@ const submit = async () => {
   } finally {
     loading.value = false;
     content.value = "";
-    console.log(ticks.value);
-    ticks.value = 0;
     setTimeout(() => status.value.deactivate(), 5000);
     close_modal();
   }
@@ -73,10 +64,7 @@ const submit = async () => {
 </script>
 
 <template>
-  <div
-    v-if="show"
-    class="fixed w-full h-full top-0 left-0 flex items-center justify-center"
-  >
+  <div class="fixed w-full h-full top-0 left-0 flex items-center justify-center">
     <div
       @click.self="close_modal()"
       class="absolute w-full h-full bg-gray-800 opacity-50 z-[-10]"
@@ -103,13 +91,8 @@ const submit = async () => {
             <!-- Character limit. -->
             <div :class="characterLimitColour">{{ characterLimit }} left</div>
             <!-- submit button. -->
-            <submit-button
-              :loading="loading"
-              :enabled="canSubmit"
-              :ticks="ticks"
-              @click="submit"
-            >
-              Answer
+            <submit-button :loading="loading" :enabled="canUpdate" @click="update">
+              Update
             </submit-button>
           </div>
         </div>

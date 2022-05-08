@@ -24,5 +24,5 @@ const addQuestion = (question) => questions.value.push(question);
     {{ wallet.publicKey.toBase58() }}
   </div>
   <question-form @added="addQuestion"></question-form>
-  <question-list :questions="questions" :loading="loading"></question-list>
+  <question-list v-model:questions="questions" :loading="loading"></question-list>
 </template>

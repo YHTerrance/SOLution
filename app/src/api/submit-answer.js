@@ -3,13 +3,21 @@ import { useWorkspace } from "@/composables";
 import { Answer } from "@/models";
 import { pollConfirmation } from "./utils";
 
-export const submitAnswer = async (targetQuestionPublicKey, content, ticks) => {
+export const submitAnswer = async (
+  targetQuestionPublicKey,
+  targetAuthorPublicKey,
+  content,
+  ticks
+) => {
   const { wallet, program, connection } = useWorkspace();
 
   const answer = web3.Keypair.generate();
 
+  console.log("Submitting targetAuthorPublicKey", targetAuthorPublicKey);
+
   const signature = await program.value.rpc.submitAnswer(
     targetQuestionPublicKey,
+    targetAuthorPublicKey,
     content,
     {
       accounts: {

@@ -6,6 +6,7 @@ import QuestionList from "@/components/QuestionList";
 
 const questions = ref([]);
 const loading = ref(true);
+
 fetchQuestions()
   .then((fetchedQuestions) => (questions.value = fetchedQuestions))
   .finally(() => (loading.value = false));
@@ -15,5 +16,5 @@ const addQuestion = (question) => questions.value.push(question);
 
 <template>
   <question-form @added="addQuestion"></question-form>
-  <question-list :questions="questions" :loading="loading"></question-list>
+  <question-list v-model:questions="questions" :loading="loading"></question-list>
 </template>

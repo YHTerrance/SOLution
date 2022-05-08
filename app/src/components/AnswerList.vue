@@ -1,33 +1,36 @@
 <script setup>
 import { toRefs, computed } from "vue";
+import AnswerCard from "@/components/AnswerCard.vue";
 
 const props = defineProps({
-	answers: Object,
-	authorRoute: Object,
+  answers: Object,
+  authorRoute: Object,
 });
 
 const { answers, authorRoute } = toRefs(props);
 
 const orderedAnswers = computed(() => {
-	return answers.value.slice().sort((a, b) => a.timestamp - b.timestamp);
+  return answers.value.slice().sort((a, b) => a.timestamp - b.timestamp);
 });
+
+const emit = defineEmits(["update:answers"]);
+
+const onDelete = async (deletedAnswer) => {
+  const filteredAnswers = answers.value.filter(
+    (answer) => answer.publicKey.toBase58() !== deletedAnswer.publicKey.toBase58()
+  );
+  emit("update:answers", filteredAnswers);
+};
 </script>
 
 <template>
-	<div class="mt-6 pl-4 border-l-2 border-pink-100">
-		<div v-for="answer in orderedAnswers" :key="answer.key">
-			<div class="py-2">
-				<h3 class="inline font-semibold" :title="answer.author">
-					<router-link :to="authorRoute" class="hover:underline">
-						{{ answer.author_display }}
-					</router-link>
-				</h3>
-				<span class="text-gray-500"> • </span>
-				<time class="text-gray-500 text-sm" :title="answer.created_at">
-					{{ answer.created_ago }}
-				</time>
-				<p class="whitespace-pre-wrap" v-text="answer.content"></p>
-			</div>
-		</div>
-	</div>
+  <div class="mt-6 pl-4 border-l-2 border-pink-100">
+    <div v-for="answer in orderedAnswers" :key="answer.key">
+      <answer-card
+        :authorRoute="authorRoute"
+        :answer="answer"
+        @delete="onDelete"
+      ></answer-card>
+    </div>
+  </div>
 </template>

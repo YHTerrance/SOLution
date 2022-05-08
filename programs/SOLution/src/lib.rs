@@ -35,9 +35,31 @@ pub mod so_lution {
     Ok(())
   }
 
+  pub fn update_question(ctx: Context<UpdateQuestion>, topic: String, content: String) -> Result<()> {
+    let question: &mut Account<Question> = &mut ctx.accounts.question;
+
+    if topic.chars().count() > 50 {
+      return Err(ErrorCode::TopicTooLong.into());
+    }
+
+    if content.chars().count() > 280 {
+      return Err(ErrorCode::ContentTooLong.into());
+    }
+
+    question.topic = topic;
+    question.content = content;
+
+    Ok(())
+  }
+
+  pub fn delete_question(_ctx: Context<DeleteQuestion>) -> Result<()> {
+    Ok(())
+  }
+
   pub fn submit_answer(
     ctx: Context<SubmitAnswer>,
     target_question: Pubkey,
+    target_author: Pubkey,
     content: String,
   ) -> Result<()> {
     let answer: &mut Account<Answer> = &mut ctx.accounts.answer;
@@ -50,12 +72,30 @@ pub mod so_lution {
 
     answer.author = *author.key;
     answer.target_question = target_question;
+    answer.target_author = target_author;
     answer.timestamp = clock.unix_timestamp;
     answer.content = content;
 
     Ok(())
   }
+
+  pub fn update_answer(ctx: Context<UpdateAnswer>, content: String) -> Result<()> {
+    let answer: &mut Account<Answer> = &mut ctx.accounts.answer;
+
+    if content.chars().count() > 280 {
+      return Err(ErrorCode::ContentTooLong.into())
+    }
+
+    answer.content = content;
+
+    Ok(())
+  }
+
+  pub fn delete_answer(_ctx: Context<DeleteAnswer>) -> Result<()> {
+    Ok(())
+  }
 }
+
 
 #[account]
 pub struct Question {
@@ -71,6 +111,7 @@ pub struct Answer {
   pub author: Pubkey,
   pub timestamp: i64,
   pub target_question: Pubkey,
+  pub target_author: Pubkey,
   pub content: String,
 }
 
@@ -84,12 +125,44 @@ pub struct AskQuestion<'info> {
 }
 
 #[derive(Accounts)]
+pub struct UpdateQuestion<'info> {
+  // has_one: checks that the author in question is similar to the current question
+  #[account(mut, has_one = author)]
+  pub question: Account<'info, Question>,
+  pub author: Signer<'info>,
+}
+
+#[derive(Accounts)]
+pub struct DeleteQuestion<'info> {
+  #[account(mut, has_one = author, close = author)]
+  // has_one: only allows author to do this | close: transfers the lamports to author after closing the account
+  pub question: Account<'info, Question>,
+  pub author: Signer<'info>,
+}
+
+#[derive(Accounts)]
 pub struct SubmitAnswer<'info> {
   #[account(init, payer = author, space = Answer::LEN)]
   pub answer: Account<'info, Answer>,
   #[account(mut)]
   pub author: Signer<'info>,
   pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct UpdateAnswer<'info> {
+  #[account(mut, has_one = author)]
+  pub answer: Account<'info, Answer>,
+  pub author: Signer<'info>
+}
+
+#[derive(Accounts)]
+pub struct DeleteAnswer<'info> {
+  #[account(mut, constraint = (answer.author == author.key() || answer.target_author == author.key()) && answer.author == receiver.key(), close = receiver)]
+  pub answer: Account<'info, Answer>,
+  pub author: Signer<'info>,
+  #[account(mut)]
+  pub receiver: SystemAccount<'info>,
 }
 
 const DISCRIMINATOR_LENGTH: usize = 8;
@@ -111,6 +184,7 @@ impl Question {
 impl Answer {
   const LEN: usize = DISCRIMINATOR_LENGTH
         + PUBLIC_KEY_LENGTH // Source question
+        + PUBLIC_KEY_LENGTH // Source question author
         + PUBLIC_KEY_LENGTH // Author
         + TIMESTAMP_LENGTH // Timestamp
         + STRING_LENGTH_PREFIX + MAX_CONTENT_LENGTH; // Content
