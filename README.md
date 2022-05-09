@@ -50,7 +50,7 @@ anchor run test
 anchor run copy-idl
 
 # Serve your frontend application locally.
-npm run serve
+yarn run serve
 
 # Switch to the devnet cluster to deploy there.
 solana config set --url devnet
