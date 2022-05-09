@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { fetchQuestions, authorFilter } from "@/api";
+import { paginateQuestions, authorFilter } from "@/api";
 import { useFromRoute } from "@/composables";
 import QuestionList from "@/components/QuestionList";
 import QuestionSearch from "@/components/QuestionSearch";
@@ -9,9 +9,16 @@ import QuestionSearch from "@/components/QuestionSearch";
 // Data.
 const router = useRouter();
 const questions = ref([]);
-const loading = ref(true);
 const author = ref("");
 const viewedAuthor = ref("");
+const filters = ref([]);
+
+const onNewPage = (newQuestions) => questions.value.push(...newQuestions);
+const { prefetch, hasNextPage, getNextPage, loading } = paginateQuestions(
+  filters,
+  2,
+  onNewPage
+);
 
 // Actions.
 const search = () => {
@@ -20,14 +27,10 @@ const search = () => {
 
 const fetchAuthorQuestions = async () => {
   if (author.value === viewedAuthor.value) return;
-  try {
-    loading.value = true;
-    const fetchedQuestions = await fetchQuestions([authorFilter(author.value)]);
-    questions.value = fetchedQuestions;
-    viewedAuthor.value = author.value;
-  } finally {
-    loading.value = false;
-  }
+  questions.value = [];
+  viewedAuthor.value = author.value;
+  filters.value = [authorFilter(author.value)];
+  prefetch().then(getNextPage);
 };
 
 // Router hooks.
@@ -67,9 +70,14 @@ useFromRoute((route) => {
     </template>
   </question-search>
   <div v-if="viewedAuthor">
-    <question-list v-model:questions="questions" :loading="loading"></question-list>
-    <div v-if="questions.length === 0" class="p-8 text-gray-500 text-center">
-      User not found...
+    <question-list
+      v-model:questions="questions"
+      :loading="loading"
+      :has-more="hasNextPage"
+      @more="getNextPage"
+    ></question-list>
+    <div v-if="!loading && questions.length === 0" class="p-8 text-gray-500 text-center">
+      User has not asked any questions...
     </div>
   </div>
 </template>
