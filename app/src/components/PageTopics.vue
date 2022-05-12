@@ -18,7 +18,7 @@ const filters = ref([]);
 const onNewPage = (newQuestions) => questions.value.push(...newQuestions);
 const { prefetch, hasNextPage, getNextPage, loading } = paginateQuestions(
   filters,
-  2,
+  5,
   onNewPage
 );
 

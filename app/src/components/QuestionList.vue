@@ -18,6 +18,7 @@ const emit = defineEmits(["update:questions", "more"]);
 const orderedQuestions = computed(() => {
   return questions.value.slice().sort((a, b) => b.timestamp - a.timestamp);
 });
+
 const onDelete = (deletedQuestion) => {
   const filteredQuestions = questions.value.filter(
     (question) => question.publicKey.toBase58() !== deletedQuestion.publicKey.toBase58()

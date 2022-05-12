@@ -9,7 +9,7 @@ const questions = ref([]);
 const onNewPage = (newQuestions) => questions.value.push(...newQuestions);
 const { prefetch, getNextPage, hasNextPage, loading } = paginateQuestions(
   [],
-  2,
+  5,
   onNewPage
 );
 

@@ -56,7 +56,7 @@ export const paginateQuestions = (
       program.value.programId,
       {
         filters: [questionDiscriminatorFilter, ...filters.value],
-        dataSlice: { offset: 72, length: 8 },
+        dataSlice: { offset: 40, length: 8 },
       }
     );
 
@@ -66,6 +66,9 @@ export const paginateQuestions = (
         timestamp: new BN(account.data, "le"),
       })
     );
+
+    console.log(allQuestionsWithTimestamps);
+
     return allQuestionsWithTimestamps
       .sort((a, b) => b.timestamp.cmp(a.timestamp))
       .map(({ pubkey }) => pubkey);
