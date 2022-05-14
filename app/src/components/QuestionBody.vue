@@ -1,5 +1,5 @@
 <script setup>
-import { toRefs } from "vue";
+import {toRefs } from "vue";
 import IconEdit from "@/components/atoms/IconEdit.vue";
 import IconDelete from "@/components/atoms/IconDelete.vue";
 import IconSpinner from "@/components/atoms/IconSpinner.vue";
@@ -16,6 +16,9 @@ const props = defineProps({
 const { question, authorRoute, isMyQuestion, onDelete } = toRefs(props);
 // Actions.
 const emit = defineEmits(["edit"]);
+const source = "# 123"
+const formula = "1 = 2+3"
+
 </script>
 
 <template>
@@ -63,6 +66,9 @@ const emit = defineEmits(["edit"]);
   </div>
 
   <p class="whitespace-pre-wrap" v-text="question.content"></p>
+  <vue3-markdown-it :source='source' />
+  <math-jax :latex="formula" />
+
   <router-link
     v-if="question.topic"
     :to="{ name: 'Topics', params: { topic: question.topic } }"
