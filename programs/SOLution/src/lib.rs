@@ -34,6 +34,14 @@ pub mod so_lution {
 
     Ok(())
   }
+  
+  pub fn select_solution(ctx: Context<SelectSolution>, solution: Pubkey,) -> Result<()> {
+    let question: &mut Account<Question> = &mut ctx.accounts.question;
+
+    question.solution = solution;
+
+    Ok(())
+  }
 
   pub fn update_question(ctx: Context<UpdateQuestion>, topic: String, content: String) -> Result<()> {
     let question: &mut Account<Question> = &mut ctx.accounts.question;
@@ -122,6 +130,13 @@ pub struct AskQuestion<'info> {
   #[account(mut)]
   pub author: Signer<'info>,
   pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct SelectSolution<'info> {
+  #[account(mut, has_one = author)]
+  pub question: Account<'info, Question>,
+  pub author: Signer<'info>,
 }
 
 #[derive(Accounts)]

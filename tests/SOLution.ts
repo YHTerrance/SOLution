@@ -566,4 +566,77 @@ describe("SOLution", () => {
     console.log(questionAccounts);
     assert.equal(questionAccounts.length, 10);
   });
+
+  it("can select solution", async () => {
+    const topic = "babydoge";
+    const content = "to the moon or not?";
+    const author = program.provider.wallet;
+
+    // Create question and an answer under the question
+    const question = await askQuestion(author, topic, content);
+    const questionAccount = await program.account.question.fetch(
+      question.publicKey
+    );
+
+    assert.equal(questionAccount.topic, topic);
+    assert.equal(questionAccount.content, content);
+
+    const answer1 = await submitAnswer(
+      author,
+      question.publicKey,
+      questionAccount.author,
+      'answer 1'
+    );
+    const answerAccount1 = await program.account.answer.fetch(answer1.publicKey);
+    assert.equal(answerAccount1.content, 'answer 1');
+
+    const answer2 = await submitAnswer(
+      author,
+      question.publicKey,
+      questionAccount.author,
+      'answer 2'
+    );
+    const answerAccount2 = await program.account.answer.fetch(answer2.publicKey);
+    assert.equal(answerAccount2.content, 'answer 2');
+
+    // select solution
+    await program.rpc.selectSolution(answer2.publicKey, {
+      accounts: {
+        question: question.publicKey,
+        author: author.publicKey,
+      },
+    });    
+    const QuestionAccount = await program.account.question.fetch(
+      question.publicKey
+    );    
+    assert.equal(QuestionAccount.solution.toBase58(), answer2.publicKey.toBase58());
+  });
+
+  it("cannot update someone else's question or answer", async () => {
+    const topic = "fantom";
+    const content = "Fantom is wonderful";
+    const author = program.provider.wallet;
+    const question = await askQuestion(author, topic, content);
+    const answer = await submitAnswer(
+      author,
+      question.publicKey,
+      author.publicKey,
+      content
+    );
+    try {
+      await program.rpc.selectSolution(
+        answer.publicKey,
+        {
+          accounts: {
+            question: question.publicKey,
+            author: anchor.web3.Keypair.generate().publicKey,
+          },
+        }
+      );
+      assert.fail("We were able to update someone else's question.");
+    } catch (error) {
+      return;
+    }
+  });
+
 });
