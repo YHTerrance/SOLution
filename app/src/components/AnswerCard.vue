@@ -9,15 +9,30 @@ import { useWorkspace } from "@/composables";
 
 const props = defineProps({
   answer: Object,
-  authorRoute: Object,
 });
 const { wallet } = useWorkspace();
-const { answer, authorRoute } = toRefs(props);
+const { answer } = toRefs(props);
 
 const isEditing = ref(false);
 
 const loading_delete = ref(false);
 const ticks_delete = ref(0);
+
+const isMyAnswer = computed(
+  () =>
+    wallet.value && wallet.value.publicKey.toBase58() === answer.value.author.toBase58()
+);
+
+const authorRoute = computed(() => {
+  if (isMyAnswer.value) {
+    return { name: "Profile" };
+  } else {
+    return {
+      name: "Users",
+      params: { author: answer.value.author.toBase58() },
+    };
+  }
+});
 
 // Actions.
 const emit = defineEmits(["delete", "fail"]);
@@ -34,11 +49,6 @@ const onDelete = async () => {
     loading_delete.value = false;
   }
 };
-
-const isMyAnswer = computed(
-  () =>
-    wallet.value && wallet.value.publicKey.toBase58() === answer.value.author.toBase58()
-);
 </script>
 
 <template>

@@ -1,18 +1,26 @@
 <script setup>
 import { ref, watchEffect } from "vue";
-import { authorFilter, fetchQuestions } from "@/api";
+import { authorFilter, paginateQuestions } from "@/api";
 import QuestionForm from "@/components/QuestionForm";
 import QuestionList from "@/components/QuestionList";
 import { useWorkspace } from "@/composables";
 
 const questions = ref([]);
-const loading = ref(true);
 const { wallet } = useWorkspace();
+const filters = ref([]);
+
+const onNewPage = (newQuestions) => questions.value.push(...newQuestions);
+const { prefetch, hasNextPage, getNextPage, loading } = paginateQuestions(
+  filters,
+  5,
+  onNewPage
+);
 
 watchEffect(() => {
-  fetchQuestions([authorFilter(wallet.value.publicKey.toBase58())])
-    .then((fetchedQuestions) => (questions.value = fetchedQuestions))
-    .finally(() => (loading.value = false));
+  if (!wallet.value) return;
+  questions.value = [];
+  filters.value = [authorFilter(wallet.value.publicKey.toBase58())];
+  prefetch().then(getNextPage);
 });
 
 const addQuestion = (question) => questions.value.push(question);
@@ -24,5 +32,10 @@ const addQuestion = (question) => questions.value.push(question);
     {{ wallet.publicKey.toBase58() }}
   </div>
   <question-form @added="addQuestion"></question-form>
-  <question-list v-model:questions="questions" :loading="loading"></question-list>
+  <question-list
+    v-model:questions="questions"
+    :loading="loading"
+    :has-more="hasNextPage"
+    @more="getNextPage"
+  ></question-list>
 </template>

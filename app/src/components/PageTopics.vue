@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { fetchQuestions, topicFilter } from "@/api";
+import { paginateQuestions, topicFilter } from "@/api";
 import { useSlug, useFromRoute } from "@/composables";
 import QuestionForm from "@/components/QuestionForm";
 import QuestionList from "@/components/QuestionList";
@@ -10,26 +10,29 @@ import QuestionSearch from "@/components/QuestionSearch";
 // Data.
 const router = useRouter();
 const questions = ref([]);
-const loading = ref(true);
 const topic = ref("");
 const slugTopic = useSlug(topic);
 const viewedTopic = ref("");
+const filters = ref([]);
+
+const onNewPage = (newQuestions) => questions.value.push(...newQuestions);
+const { prefetch, hasNextPage, getNextPage, loading } = paginateQuestions(
+  filters,
+  5,
+  onNewPage
+);
 
 // Actions.
 const search = () => {
   router.push(`/topics/${slugTopic.value}`);
 };
 
-const fetchTopicQuestions = async () => {
+const fetchTopicQuestions = () => {
   if (slugTopic.value === viewedTopic.value) return;
-  try {
-    loading.value = true;
-    const fetchedQuestions = await fetchQuestions([topicFilter(slugTopic.value)]);
-    questions.value = fetchedQuestions;
-    viewedTopic.value = slugTopic.value;
-  } finally {
-    loading.value = false;
-  }
+  questions.value = [];
+  viewedTopic.value = slugTopic.value;
+  filters.value = [topicFilter(slugTopic.value)];
+  prefetch().then(getNextPage);
 };
 
 const addQuestion = (question) => questions.value.push(question);
@@ -71,8 +74,13 @@ useFromRoute((route) => {
   </question-search>
   <div v-if="viewedTopic">
     <question-form @added="addQuestion" :forced-topic="viewedTopic"></question-form>
-    <question-list v-model:questions="questions" :loading="loading"></question-list>
-    <div v-if="questions.length === 0" class="p-8 text-gray-500 text-center">
+    <question-list
+      v-model:questions="questions"
+      :loading="loading"
+      :has-more="hasNextPage"
+      @more="getNextPage"
+    ></question-list>
+    <div v-if="!loading && questions.length === 0" class="p-8 text-gray-500 text-center">
       No questions were found in this topic...
     </div>
   </div>

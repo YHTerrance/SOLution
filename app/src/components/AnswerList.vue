@@ -4,10 +4,9 @@ import AnswerCard from "@/components/AnswerCard.vue";
 
 const props = defineProps({
   answers: Object,
-  authorRoute: Object,
 });
 
-const { answers, authorRoute } = toRefs(props);
+const { answers } = toRefs(props);
 
 const orderedAnswers = computed(() => {
   return answers.value.slice().sort((a, b) => a.timestamp - b.timestamp);
@@ -26,11 +25,7 @@ const onDelete = async (deletedAnswer) => {
 <template>
   <div class="mt-6 pl-4 border-l-2 border-pink-100">
     <div v-for="answer in orderedAnswers" :key="answer.key">
-      <answer-card
-        :authorRoute="authorRoute"
-        :answer="answer"
-        @delete="onDelete"
-      ></answer-card>
+      <answer-card :answer="answer" @delete="onDelete"></answer-card>
     </div>
   </div>
 </template>

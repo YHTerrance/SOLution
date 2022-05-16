@@ -533,4 +533,37 @@ describe("SOLution", () => {
       assert.equal(questionAccount.content, content);
     }
   });
+
+  it("can submit 10 sample questions", async () => {
+    const testTopic = "Test topic";
+
+    for (let i = 0; i < 10; ++i) {
+      let testContent = `this is the test content ${i}`;
+
+      let otherUser = anchor.web3.Keypair.generate();
+      let signature = await program.provider.connection.requestAirdrop(
+        otherUser.publicKey,
+        10000000000
+      );
+      await program.provider.connection.confirmTransaction(signature);
+
+      await askQuestion(otherUser, testTopic, testContent);
+    }
+
+    const questionAccounts = await program.account.question.all([
+      {
+        memcmp: {
+          offset:
+            8 + // Discriminator.
+            32 + // Author public key.
+            8 + // Timestamp.
+            32 + // Solution public key
+            4, // Topic string prefix.
+          bytes: bs58.encode(Buffer.from(testTopic)),
+        },
+      },
+    ]);
+    console.log(questionAccounts);
+    assert.equal(questionAccounts.length, 10);
+  });
 });
