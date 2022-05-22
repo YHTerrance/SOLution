@@ -3,15 +3,18 @@ import { toRefs, computed, ref } from "vue";
 import IconEdit from "@/components/atoms/IconEdit.vue";
 import IconDelete from "@/components/atoms/IconDelete.vue";
 import IconSpinner from "@/components/atoms/IconSpinner.vue";
+import IconCheck from "@/components/atoms/IconCheck.vue";
 import AnswerModalUpdate from "@/components/AnswerModalUpdate.vue";
 import { deleteAnswer } from "@/api";
+import { selectSolution } from "@/api";
 import { useWorkspace } from "@/composables";
 
 const props = defineProps({
+  question: Object,
   answer: Object,
 });
 const { wallet } = useWorkspace();
-const { answer } = toRefs(props);
+const { question, answer } = toRefs(props);
 
 const isEditing = ref(false);
 
@@ -35,7 +38,7 @@ const authorRoute = computed(() => {
 });
 
 // Actions.
-const emit = defineEmits(["delete", "fail"]);
+const emit = defineEmits(["delete", "fail", "select"]);
 
 const onDelete = async () => {
   console.log("Deleting answer...");
@@ -49,6 +52,17 @@ const onDelete = async () => {
     loading_delete.value = false;
   }
 };
+
+const onSelect = async() => {
+  console.log("Selecting answer...");
+  try {
+    console.log(question);
+    await selectSolution(question, answer.value.publicKey);
+    emit("select", answer.value);
+  } catch (error) {
+    console.log(error);
+  }
+}
 </script>
 
 <template>
@@ -68,6 +82,11 @@ const onDelete = async () => {
 
   <div class="flex justify-between py-2">
     <div>
+      <button
+        @click="onSelect"
+        class="px-2 rounded-full text-gray-500 hover:text-pink-500 hover:bg-gray-100"
+        title="Select answer"
+      ><icon-check></icon-check></button>
       <h3 class="inline font-semibold" :title="answer.author">
         <router-link :to="authorRoute" class="hover:underline">
           {{ answer.author_display }}
