@@ -115,7 +115,7 @@ const copyQuestionUrl = (questionBase58PublicKey) => {
       ></icon-share>
     </div>
 
-    <answer-list v-show="answers.length" v-model:answers="answers"></answer-list>
+    <answer-list v-show="answers.length" v-model:answers="answers" :question="question"></answer-list>
     <answer-modal
       :show="showAnswerModal"
       :targetQuestion="question"
