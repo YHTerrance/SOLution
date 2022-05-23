@@ -1,5 +1,5 @@
 <script setup>
-import { toRefs, computed } from "vue";
+import { ref, toRefs, computed } from "vue";
 import AnswerCard from "@/components/AnswerCard.vue";
 
 const props = defineProps({
@@ -10,19 +10,10 @@ const props = defineProps({
 const { question, answers } = toRefs(props);
 
 const orderedAnswers = computed(() => {
-  const cmpFunc = (a, b) => {
-    if (question?.value?.solution !== undefined && a.publicKey.toBase58() === question.value.solution.toBase58()) {
-      return -1;
-    } else if (question?.value?.solution !== undefined && b.publicKey.toBase58() === question.value.solution.toBase58()){
-      return 1;
-    } else {
-      return a.timestamp - b.timestamp;
-    }
-  };
-  return answers.value.slice().sort(cmpFunc);
+  return answers.value.slice().sort((a, b) => a.timestamp - b.timestamp);
 });
 
-const emit = defineEmits(["update:answers"]);
+const emit = defineEmits(["update:answers", "deleteSelection", "select"]);
 
 const onDelete = async (deletedAnswer) => {
   const filteredAnswers = answers.value.filter(
@@ -30,12 +21,31 @@ const onDelete = async (deletedAnswer) => {
   );
   emit("update:answers", filteredAnswers);
 };
+
+let solution = ref(undefined);
+const onDeleteSolution = async (deletedAnswer) => {
+  solution.value = undefined;
+  onDelete(deletedAnswer);
+  emit("deleteSelection");
+};
+const onSelect = async (bestAnswer) => {
+  if (solution.value !== undefined) {
+    answers.value.push(solution.value);
+  }
+  solution.value = bestAnswer;
+  onDelete(bestAnswer);
+  emit("select");
+};
+
 </script>
 
 <template>
   <div class="mt-6 pl-4 border-l-2 border-pink-100">
+    <div v-if="solution !== undefined">
+      <answer-card :answer="solution" :question="question" @delete="onDeleteSolution"></answer-card>
+    </div>
     <div v-for="answer in orderedAnswers" :key="answer.key">
-      <answer-card :answer="answer" :question="question" @delete="onDelete"></answer-card>
+      <answer-card :answer="answer" :question="question" @delete="onDelete" @select="onSelect"></answer-card>
     </div>
   </div>
 </template>

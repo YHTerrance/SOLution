@@ -54,9 +54,7 @@ const onDelete = async () => {
 };
 
 const onSelect = async() => {
-  console.log("Selecting answer...");
   try {
-    console.log(question);
     await selectSolution(question, answer.value.publicKey);
     emit("select", answer.value);
   } catch (error) {
