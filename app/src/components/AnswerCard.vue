@@ -110,16 +110,28 @@ const onRedeem = async () => {
         class="flex p-2 pt-0 ml-[-8px] mb-2 justify-between items-center"
       >
         <div class="underline text-pink-500 font-bold">Solution</div>
-        <button
-          v-if="answer.amount > 0"
-          @click="onRedeem"
-          class="relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200"
-        >
-          <span class="flex px-5 py-2.5 rounded-md text-white">
-            Redeem <icon-solana class="mx-2" />
-            {{ answer.amount / LAMPORTS_PER_SOL }}
-          </span>
-        </button>
+        <div v-if="isMyAnswer">
+          <button
+            v-if="answer.amount > 0"
+            @click="onRedeem"
+            class="relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200"
+          >
+            <span class="flex px-5 py-2.5 rounded-md text-white">
+              Redeem <icon-solana class="mx-2" />
+              {{ answer.amount / LAMPORTS_PER_SOL }}
+            </span>
+          </button>
+          <button
+            v-else
+            @click="onRedeem"
+            disabled
+            class="relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200"
+          >
+            <span class="flex px-5 py-2.5 rounded-md text-white">
+              Reward claimed
+            </span>
+          </button>
+        </div>
       </div>
 
       <div class="flex justify-between pb-2">
