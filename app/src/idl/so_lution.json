@@ -33,6 +33,27 @@
       ]
     },
     {
+      "name": "selectSolution",
+      "accounts": [
+        {
+          "name": "question",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "author",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "solution",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
       "name": "updateQuestion",
       "accounts": [
         {
