@@ -1,4 +1,8 @@
 use anchor_lang::prelude::*;
+use anchor_lang::solana_program::native_token::LAMPORTS_PER_SOL;
+
+const BASE_FEE_LAMPORTS: u64 = LAMPORTS_PER_SOL / 1000;
+const MIN_REWARD_LAMPORTS: u64 = LAMPORTS_PER_SOL / 1000;
 
 declare_id!("97qP2WfmsqrYwrQ1s5APNQ4RxwrBbmS2v48UzG2cUZnw");
 
@@ -8,13 +12,15 @@ pub enum ErrorCode {
   TopicTooLong,
   #[msg("The provided content should be 280 characters long maximum.")]
   ContentTooLong,
+  #[msg("Insufficient funds.")]
+  InsufficientFunds,
 }
 
 #[program]
 pub mod so_lution {
   use super::*;
 
-  pub fn ask_question(ctx: Context<AskQuestion>, topic: String, content: String) -> Result<()> {
+  pub fn ask_question(ctx: Context<AskQuestion>, topic: String, content: String, amount: u64) -> Result<()> {
     let question: &mut Account<Question> = &mut ctx.accounts.question;
     let author: &Signer = &ctx.accounts.author;
     let clock: Clock = Clock::get().unwrap();
@@ -27,18 +33,49 @@ pub mod so_lution {
       return Err(ErrorCode::ContentTooLong.into());
     }
 
+    if amount < BASE_FEE_LAMPORTS + MIN_REWARD_LAMPORTS {
+      return Err(ErrorCode::InsufficientFunds.into())
+    }
+
     question.author = *author.key;
     question.timestamp = clock.unix_timestamp;
     question.topic = topic;
     question.content = content;
+    question.amount = amount;
+
+    // Transfer 1 SOL from author to question
+    let ix = anchor_lang::solana_program::system_instruction::transfer(
+      &author.key(),
+      &question.key(),
+      amount,
+    );
+
+    anchor_lang::solana_program::program::invoke(
+        &ix,
+        &[
+            author.to_account_info(),
+            question.to_account_info(),
+        ],
+    )?;
 
     Ok(())
   }
-  
-  pub fn select_solution(ctx: Context<SelectSolution>, solution: Pubkey,) -> Result<()> {
-    let question: &mut Account<Question> = &mut ctx.accounts.question;
 
-    question.solution = solution;
+  pub fn select_solution(ctx: Context<SelectSolution>) -> Result<()> {
+    let question: &mut Account<Question> = &mut ctx.accounts.question;
+    let solution: &mut Account<Answer> = &mut ctx.accounts.answer;
+    let author: &Signer = &ctx.accounts.author;
+
+    question.solution = solution.key();
+
+    let balance = question.amount;
+
+    // Transfer funds from question account to answer account and question owner
+    **question.to_account_info().try_borrow_mut_lamports()? -= balance;
+    **author.to_account_info().try_borrow_mut_lamports()? += BASE_FEE_LAMPORTS;
+    **solution.to_account_info().try_borrow_mut_lamports()? += balance - BASE_FEE_LAMPORTS;
+    solution.amount = balance - BASE_FEE_LAMPORTS;
+    solution.is_solution = true;
 
     Ok(())
   }
@@ -60,9 +97,9 @@ pub mod so_lution {
     Ok(())
   }
 
-  pub fn delete_question(_ctx: Context<DeleteQuestion>) -> Result<()> {
-    Ok(())
-  }
+  // pub fn delete_question(_ctx: Context<DeleteQuestion>) -> Result<()> {
+  //   Ok(())
+  // }
 
   pub fn submit_answer(
     ctx: Context<SubmitAnswer>,
@@ -95,11 +132,22 @@ pub mod so_lution {
     }
 
     answer.content = content;
-
     Ok(())
   }
 
   pub fn delete_answer(_ctx: Context<DeleteAnswer>) -> Result<()> {
+    Ok(())
+  }
+
+  pub fn redeem_reward(ctx: Context<RedeemReward>) -> Result<()> {
+    let answer: &mut Account<Answer> = &mut ctx.accounts.answer;
+    let author: &Signer = &ctx.accounts.author;
+
+    let balance = answer.amount;
+    // Redeem reward when answer is selected as solution
+    **answer.to_account_info().try_borrow_mut_lamports()? -= balance;
+    **author.to_account_info().try_borrow_mut_lamports()? += balance;
+
     Ok(())
   }
 }
@@ -112,6 +160,7 @@ pub struct Question {
   pub solution: Pubkey,
   pub topic: String,
   pub content: String,
+  pub amount: u64,
 }
 
 #[account]
@@ -121,6 +170,8 @@ pub struct Answer {
   pub target_question: Pubkey,
   pub target_author: Pubkey,
   pub content: String,
+  pub amount: u64,
+  pub is_solution: bool
 }
 
 #[derive(Accounts)]
@@ -136,6 +187,9 @@ pub struct AskQuestion<'info> {
 pub struct SelectSolution<'info> {
   #[account(mut, has_one = author)]
   pub question: Account<'info, Question>,
+  #[account(mut)]
+  pub answer: Account<'info, Answer>,
+  #[account(mut)]
   pub author: Signer<'info>,
 }
 
@@ -147,13 +201,13 @@ pub struct UpdateQuestion<'info> {
   pub author: Signer<'info>,
 }
 
-#[derive(Accounts)]
-pub struct DeleteQuestion<'info> {
-  #[account(mut, has_one = author, close = author)]
-  // has_one: only allows author to do this | close: transfers the lamports to author after closing the account
-  pub question: Account<'info, Question>,
-  pub author: Signer<'info>,
-}
+// #[derive(Accounts)]
+// pub struct DeleteQuestion<'info> {
+//   #[account(mut, has_one = author, close = author)]
+//   // has_one: only allows author to do this | close: transfers the lamports to author after closing the account
+//   pub question: Account<'info, Question>,
+//   pub author: Signer<'info>,
+// }
 
 #[derive(Accounts)]
 pub struct SubmitAnswer<'info> {
@@ -173,11 +227,19 @@ pub struct UpdateAnswer<'info> {
 
 #[derive(Accounts)]
 pub struct DeleteAnswer<'info> {
-  #[account(mut, constraint = (answer.author == author.key() || answer.target_author == author.key()) && answer.author == receiver.key(), close = receiver)]
+  #[account(mut, constraint = !answer.is_solution && ((answer.author == author.key() || answer.target_author == author.key()) && answer.author == receiver.key()), close = receiver)]
   pub answer: Account<'info, Answer>,
   pub author: Signer<'info>,
   #[account(mut)]
   pub receiver: SystemAccount<'info>,
+}
+
+#[derive(Accounts)]
+pub struct RedeemReward<'info> {
+  #[account(mut, has_one = author)]
+  pub answer: Account<'info, Answer>,
+  #[account(mut)]
+  pub author: Signer<'info>
 }
 
 const DISCRIMINATOR_LENGTH: usize = 8;
@@ -186,6 +248,8 @@ const TIMESTAMP_LENGTH: usize = 8;
 const STRING_LENGTH_PREFIX: usize = 4; // Stores the size of the string
 const MAX_TOPIC_LENGTH: usize = 50 * 4; // 50 chars max
 const MAX_CONTENT_LENGTH: usize = 280 * 4; // 280 chars max
+const AMOUNT_LENGTH: usize = 8;
+const BOOL_LENGTH: usize = 1;
 
 impl Question {
   const LEN: usize = DISCRIMINATOR_LENGTH
@@ -193,7 +257,8 @@ impl Question {
         + TIMESTAMP_LENGTH // Timestamp
         + PUBLIC_KEY_LENGTH // Solution
         + STRING_LENGTH_PREFIX + MAX_TOPIC_LENGTH // Topic
-        + STRING_LENGTH_PREFIX + MAX_CONTENT_LENGTH; // Content
+        + STRING_LENGTH_PREFIX + MAX_CONTENT_LENGTH // Content
+        + AMOUNT_LENGTH; // Amount
 }
 
 impl Answer {
@@ -202,5 +267,7 @@ impl Answer {
         + PUBLIC_KEY_LENGTH // Source question author
         + PUBLIC_KEY_LENGTH // Author
         + TIMESTAMP_LENGTH // Timestamp
-        + STRING_LENGTH_PREFIX + MAX_CONTENT_LENGTH; // Content
+        + STRING_LENGTH_PREFIX + MAX_CONTENT_LENGTH // Content
+        + AMOUNT_LENGTH // Amount
+        + BOOL_LENGTH; // Boolean recording if it is the solution
 }

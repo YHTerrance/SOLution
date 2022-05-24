@@ -29,6 +29,10 @@
         {
           "name": "content",
           "type": "string"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
         }
       ]
     },
@@ -41,17 +45,17 @@
           "isSigner": false
         },
         {
+          "name": "answer",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "author",
-          "isMut": false,
+          "isMut": true,
           "isSigner": true
         }
       ],
-      "args": [
-        {
-          "name": "solution",
-          "type": "publicKey"
-        }
-      ]
+      "args": []
     },
     {
       "name": "updateQuestion",
@@ -169,6 +173,22 @@
         }
       ],
       "args": []
+    },
+    {
+      "name": "redeemReward",
+      "accounts": [
+        {
+          "name": "answer",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "author",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -196,6 +216,10 @@
           {
             "name": "content",
             "type": "string"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
           }
         ]
       }
@@ -224,6 +248,10 @@
           {
             "name": "content",
             "type": "string"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
           }
         ]
       }
@@ -239,9 +267,11 @@
       "code": 6001,
       "name": "ContentTooLong",
       "msg": "The provided content should be 280 characters long maximum."
+    },
+    {
+      "code": 6002,
+      "name": "InsufficientFunds",
+      "msg": "Insufficient funds."
     }
-  ],
-  "metadata": {
-    "address": "97qP2WfmsqrYwrQ1s5APNQ4RxwrBbmS2v48UzG2cUZnw"
-  }
+  ]
 }
