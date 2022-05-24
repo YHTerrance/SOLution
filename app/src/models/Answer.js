@@ -8,6 +8,8 @@ export class Answer {
     this.targetQuestion = accountData.targetQuestion;
     this.targetAuthor = accountData.targetAuthor;
     this.content = accountData.content;
+    this.amount = accountData.amount;
+    this.isSolution = accountData.isSolution;
   }
 
   get key() {

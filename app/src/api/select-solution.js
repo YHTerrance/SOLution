@@ -1,13 +1,12 @@
 import { useWorkspace } from "@/composables";
 
-export const selectSolution = async (question, answerPublicKey) => {
+export const selectSolution = async (question, answer) => {
   const { wallet, program } = useWorkspace();
-  await program.value.rpc.selectSolution(answerPublicKey, {
+  await program.value.rpc.selectSolution({
     accounts: {
+      question: question.publicKey,
+      answer: answer.publicKey,
       author: wallet.value.publicKey,
-      question: question.value.publicKey,
     },
   });
-
-  question.solution = answerPublicKey;
 };

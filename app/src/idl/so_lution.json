@@ -83,22 +83,6 @@
       ]
     },
     {
-      "name": "deleteQuestion",
-      "accounts": [
-        {
-          "name": "question",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "author",
-          "isMut": false,
-          "isSigner": true
-        }
-      ],
-      "args": []
-    },
-    {
       "name": "submitAnswer",
       "accounts": [
         {
@@ -252,6 +236,10 @@
           {
             "name": "amount",
             "type": "u64"
+          },
+          {
+            "name": "isSolution",
+            "type": "bool"
           }
         ]
       }
@@ -273,5 +261,8 @@
       "name": "InsufficientFunds",
       "msg": "Insufficient funds."
     }
-  ]
+  ],
+  "metadata": {
+    "address": "97qP2WfmsqrYwrQ1s5APNQ4RxwrBbmS2v48UzG2cUZnw"
+  }
 }

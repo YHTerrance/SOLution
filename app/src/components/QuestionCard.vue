@@ -8,10 +8,13 @@ import AnswerList from "@/components/AnswerList.vue";
 import IconHeart from "@/components/atoms/IconHeart.vue";
 import IconComment from "@/components/atoms/IconComment.vue";
 import IconShare from "@/components/atoms/IconShare.vue";
+import IconSolana from "@/components/atoms/IconSolana.vue";
 import AnswerModal from "@/components/AnswerModal.vue";
 import QuestionBody from "@/components/QuestionBody";
 import ToastItem from "@/components/atoms/ToastItem.vue";
 import QuestionFormUpdate from "@/components/QuestionFormUpdate.vue";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { BASE_FEE_LAMPORTS } from "@/const";
 
 const props = defineProps({
   question: Object,
@@ -97,7 +100,7 @@ const copyQuestionUrl = (questionBase58PublicKey) => {
       :ticks_delete="ticks_delete"
       @edit="isEditing = true"
     ></question-body>
-    <div class="flex justify-between mt-4">
+    <div class="flex justify-between mt-4 items-center">
       <icon-heart
         class="w-8 h-8 text-pink-500 cursor-pointer"
         :isActive="liked"
@@ -114,6 +117,17 @@ const copyQuestionUrl = (questionBase58PublicKey) => {
         :isActive="false"
         @click="copyQuestionUrl(question.publicKey.toBase58())"
       ></icon-share>
+
+      <span
+        class="bg-pink-100 text-pink-800 text-md font-medium inline-flex items-center px-2.5 py-1 rounded dark:bg-pink-200 dark:text-pink-800"
+      >
+        Rewards:
+        <icon-solana class="mx-2"></icon-solana>
+
+        {{
+          Math.max((question.amount - BASE_FEE_LAMPORTS) / LAMPORTS_PER_SOL, 0)
+        }}
+      </span>
     </div>
 
     <answer-list

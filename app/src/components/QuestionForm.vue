@@ -1,11 +1,17 @@
 <script setup>
 import { computed, ref, toRefs } from "vue";
-import { useAutoresizeTextarea, useCountCharacterLimit, useSlug } from "@/composables";
+import {
+  useAutoresizeTextarea,
+  useCountCharacterLimit,
+  useSlug,
+} from "@/composables";
 import SubmitButton from "@/components/atoms/SubmitButton.vue";
 import { askQuestion } from "@/api";
 import { useWallet } from "solana-wallets-vue";
 import ToastItem from "@/components/atoms/ToastItem.vue";
 import { Status } from "@/models";
+import { BASE_FEE_LAMPORTS } from "@/const";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 // Props.
 const props = defineProps({
@@ -16,6 +22,7 @@ const { forcedTopic } = toRefs(props);
 // Form data.
 const content = ref("");
 const topic = ref("");
+const amount = ref();
 const slugTopic = useSlug(topic);
 const effectiveTopic = computed(() => forcedTopic.value ?? slugTopic.value);
 
@@ -46,7 +53,12 @@ const ask = async () => {
   loading.value = true;
   let question;
   try {
-    question = await askQuestion(effectiveTopic.value, content.value, ticks);
+    question = await askQuestion(
+      effectiveTopic.value,
+      content.value,
+      amount.value,
+      ticks
+    );
     status.value.activate("success", "Successfully asked question");
     emit("added", question);
   } catch (error) {
@@ -57,6 +69,7 @@ const ask = async () => {
     loading.value = false;
     topic.value = "";
     content.value = "";
+    amount.value = undefined;
     setTimeout(() => status.value.deactivate(), 5000);
   }
 };
@@ -104,7 +117,6 @@ const ask = async () => {
         <!-- Character limit. -->
         <div :class="characterLimitColour">{{ characterLimit }} left</div>
 
-        <!-- question button. -->
         <submit-button
           :loading="loading"
           :enabled="canQuestion"
@@ -114,11 +126,31 @@ const ask = async () => {
           Ask
         </submit-button>
       </div>
+
+      <!-- question button. -->
+      <div class="relative z-0 w-1/2 my-6 group">
+        <input
+          v-model="amount"
+          type="number"
+          name="charge"
+          id="charge"
+          class="block py-2.5 px-0 w-full text-sm text-pink-900 bg-transparent border-0 border-b-2 border-pink-300 appearance-none dark:text-white dark:border-pink-600 dark:focus:border-pink-500 focus:outline-none focus:ring-0 focus:border-pink-600 peer"
+          placeholder=" "
+          required
+        />
+        <label
+          for="charge"
+          class="peer-focus:font-medium absolute text-sm text-pink-500 dark:text-pink-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-pink-600 peer-focus:dark:text-pink-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+        >
+          Charge (min: {{ BASE_FEE_LAMPORTS / LAMPORTS_PER_SOL }} SOL)</label
+        >
+      </div>
     </div>
+
     <toast-item :status="status"></toast-item>
   </div>
 
-  <div v-else class="px-8 py-4 bg-gray-50 text-gray-500 text-center border-b">
+  <div v-else class="px-8 py-4 bg-pink-50 text-gray-500 text-center border-b">
     Connect your wallet to start asking questions...
   </div>
 </template>
