@@ -2,18 +2,18 @@
 seeds = false
 
 [programs.localnet]
-so_lution = "97qP2WfmsqrYwrQ1s5APNQ4RxwrBbmS2v48UzG2cUZnw"
+so_lution = "AQJ7RmbJtwGHru6aimiLriPZ4gTs7q5NnzeetyWgNfxo"
 [programs.devnet]
-so_lution = "97qP2WfmsqrYwrQ1s5APNQ4RxwrBbmS2v48UzG2cUZnw"
+so_lution = "AQJ7RmbJtwGHru6aimiLriPZ4gTs7q5NnzeetyWgNfxo"
 [programs.mainnet]
-so_lution = "97qP2WfmsqrYwrQ1s5APNQ4RxwrBbmS2v48UzG2cUZnw"
+so_lution = "AQJ7RmbJtwGHru6aimiLriPZ4gTs7q5NnzeetyWgNfxo"
 
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
-cluster = "localnet"
-wallet = "/Users/ji-yuntu/.config/solana/id.json"
+cluster = "devnet"
+wallet = "~/.config/solana/id.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
