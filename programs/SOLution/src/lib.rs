@@ -69,6 +69,7 @@ pub mod so_lution {
 
     let balance = question.amount;
 
+    // Transfer funds from question account to answer account and question owner
     **question.to_account_info().try_borrow_mut_lamports()? -= balance;
     **author.to_account_info().try_borrow_mut_lamports()? += BASE_FEE_LAMPORTS;
     **solution.to_account_info().try_borrow_mut_lamports()? += balance - BASE_FEE_LAMPORTS;
@@ -141,6 +142,7 @@ pub mod so_lution {
     let author: &Signer = &ctx.accounts.author;
 
     let balance = answer.amount;
+    // Redeem reward when answer is selected as solution
     **answer.to_account_info().try_borrow_mut_lamports()? -= balance;
     **author.to_account_info().try_borrow_mut_lamports()? += balance;
 

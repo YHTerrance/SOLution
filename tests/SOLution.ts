@@ -570,6 +570,7 @@ describe("SOLution", () => {
         assert.equal(questionAccount.content, content);
       }
     });
+
     it("cannot update someone else's question or answer", async () => {
       const topic = "fantom";
       const content = "Fantom is wonderful";
