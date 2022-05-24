@@ -8,3 +8,4 @@ export * from "./update-answer";
 export * from "./delete-question";
 export * from "./delete-answer";
 export * from "./select-solution";
+export * from "./redeem-reward";

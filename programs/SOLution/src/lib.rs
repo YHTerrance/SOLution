@@ -74,6 +74,7 @@ pub mod so_lution {
     **question.to_account_info().try_borrow_mut_lamports()? -= balance;
     **author.to_account_info().try_borrow_mut_lamports()? += BASE_FEE_LAMPORTS;
     **solution.to_account_info().try_borrow_mut_lamports()? += balance - BASE_FEE_LAMPORTS;
+    question.amount = 0;
     solution.amount = balance - BASE_FEE_LAMPORTS;
     solution.is_solution = true;
 
@@ -147,7 +148,7 @@ pub mod so_lution {
     // Redeem reward when answer is selected as solution
     **answer.to_account_info().try_borrow_mut_lamports()? -= balance;
     **author.to_account_info().try_borrow_mut_lamports()? += balance;
-
+    answer.amount = 0;
     Ok(())
   }
 }

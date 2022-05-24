@@ -4,10 +4,12 @@ import IconEdit from "@/components/atoms/IconEdit.vue";
 import IconDelete from "@/components/atoms/IconDelete.vue";
 import IconSpinner from "@/components/atoms/IconSpinner.vue";
 import IconCheck from "@/components/atoms/IconCheck.vue";
+import IconSolana from "@/components/atoms/IconSolana.vue";
 import AnswerModalUpdate from "@/components/AnswerModalUpdate.vue";
-import { deleteAnswer } from "@/api";
-import { selectSolution } from "@/api";
+import { deleteAnswer, selectSolution, redeemReward } from "@/api";
 import { useWorkspace } from "@/composables";
+import { BASE_FEE_LAMPORTS } from "@/const";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 const props = defineProps({
   question: Object,
@@ -61,11 +63,21 @@ const onDelete = async () => {
   }
 };
 
-// TODO: make sure only the author can choose the best answer
 const onSelect = async () => {
   try {
-    await selectSolution(question, answer.value.publicKey);
+    await selectSolution(question.value, answer.value);
     question.value.solution = answer.value.publicKey;
+    answer.value.amount += question.value.amount - BASE_FEE_LAMPORTS;
+    question.value.amount = 0;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const onRedeem = async () => {
+  try {
+    await redeemReward(answer.value);
+    answer.value.amount = 0;
   } catch (error) {
     console.log(error);
   }
@@ -95,9 +107,19 @@ const onSelect = async () => {
     <div :class="isSolution ? 'bg-pink-100 p-4 rounded-lg' : 'p-4'">
       <div
         v-if="isSolution"
-        class="underline p-2 pt-0 ml-[-8px] mb-2 text-pink-700 font-bold"
+        class="flex p-2 pt-0 ml-[-8px] mb-2 justify-between items-center"
       >
-        Solution
+        <div class="underline text-pink-500 font-bold">Solution</div>
+        <button
+          v-if="answer.amount > 0"
+          @click="onRedeem"
+          class="relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200"
+        >
+          <span class="flex px-5 py-2.5 rounded-md text-white">
+            Redeem <icon-solana class="mx-2" />
+            {{ answer.amount / LAMPORTS_PER_SOL }}
+          </span>
+        </button>
       </div>
 
       <div class="flex justify-between pb-2">
