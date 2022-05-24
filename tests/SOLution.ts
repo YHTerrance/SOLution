@@ -433,7 +433,7 @@ describe("SOLution", () => {
       }
     });
 
-    it("can delete an answer and a question respectively", async () => {
+    it("can delete an answer", async () => {
       const author = program.provider.wallet;
       const question = await askQuestion(
         author,
@@ -456,22 +456,10 @@ describe("SOLution", () => {
         },
       });
 
-      await program.rpc.deleteQuestion({
-        accounts: {
-          question: question.publicKey,
-          author: author.publicKey,
-        },
-      });
-
       // Ensure that fetcing the question and answer account returns NULL
-      const questionAccount = await program.account.question.fetchNullable(
-        question.publicKey
-      );
       const answerAccount = await program.account.answer.fetchNullable(
         answer.publicKey
       );
-
-      assert.ok(questionAccount === null);
       assert.ok(answerAccount === null);
     });
 
@@ -506,26 +494,14 @@ describe("SOLution", () => {
         },
       });
 
-      await program.rpc.deleteQuestion({
-        accounts: {
-          question: question.publicKey,
-          author: author.publicKey,
-        },
-      });
-
-      // Ensure that fetcing the question and answer account returns NULL
-      const questionAccount = await program.account.question.fetchNullable(
-        question.publicKey
-      );
       const answerAccount = await program.account.answer.fetchNullable(
         answer.publicKey
       );
 
-      assert.ok(questionAccount === null);
       assert.ok(answerAccount === null);
     });
 
-    it("cannot delete delete someone else's question and answer", async () => {
+    it("cannot delete delete someone else's answer", async () => {
       const topic = "topic";
       const content = "content";
       const author = program.provider.wallet;
@@ -552,22 +528,6 @@ describe("SOLution", () => {
           answer.publicKey
         );
         assert.equal(answerAccount.content, content);
-      }
-
-      try {
-        await program.rpc.deleteQuestion({
-          accounts: {
-            question: question.publicKey,
-            author: anchor.web3.Keypair.generate().publicKey,
-          },
-        });
-        assert.fail("We were able to delete someone else's question");
-      } catch (error) {
-        const questionAccount = await program.account.question.fetch(
-          question.publicKey
-        );
-        assert.equal(questionAccount.topic, topic);
-        assert.equal(questionAccount.content, content);
       }
     });
 
@@ -682,6 +642,25 @@ describe("SOLution", () => {
         reward.toNumber(),
         RENT_MAX_APPROX
       );
+
+      try {
+        // Also check that we cannot delete the answer when it is selected as the solution
+        await program.rpc.deleteAnswer({
+          accounts: {
+            answer: answer2.publicKey,
+            author: author.publicKey,
+            receiver: author.publicKey,
+          },
+        });
+        assert.fail(
+          "We were able to delete an answer that is selected as a solution"
+        );
+      } catch (error) {
+        const answer2Account = await program.account.answer.fetch(
+          answer2.publicKey
+        );
+        assert.equal(answer2Account.content, "answer 2");
+      }
     });
 
     it("can submit 10 sample questions", async () => {
