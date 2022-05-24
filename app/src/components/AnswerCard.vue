@@ -12,10 +12,10 @@ import { useWorkspace } from "@/composables";
 const props = defineProps({
   question: Object,
   answer: Object,
-  isBest: Boolean,
+  isSolution: Boolean,
 });
 const { wallet } = useWorkspace();
-const { question, answer, isBest } = toRefs(props);
+const { question, answer, isSolution } = toRefs(props);
 
 const isEditing = ref(false);
 
@@ -65,7 +65,7 @@ const onDelete = async () => {
 const onSelect = async () => {
   try {
     await selectSolution(question, answer.value.publicKey);
-    emit("select", answer.value);
+    question.value.solution = answer.value.publicKey;
   } catch (error) {
     console.log(error);
   }
@@ -92,63 +92,79 @@ const onSelect = async () => {
       </div>
     </answer-modal-update>
 
-    <div class="flex justify-between py-2">
-      <div>
-        <h3 class="inline font-semibold" :title="answer.author">
-          <router-link :to="authorRoute" class="hover:underline">
-            {{ answer.author_display }}
-          </router-link>
-        </h3>
-        <span class="text-gray-500"> • </span>
-        <time class="text-gray-500 text-sm" :title="answer.created_at">
-          {{ answer.created_ago }}
-        </time>
+    <div :class="isSolution ? 'bg-pink-100 p-4 rounded-lg' : 'p-4'">
+      <div
+        v-if="isSolution"
+        class="underline p-2 pt-0 ml-[-8px] mb-2 text-pink-700 font-bold"
+      >
+        Solution
       </div>
 
-      <div class="flex">
-        <div class="flex" v-if="isMyAnswer">
-          <button
-            @click="isEditing = true"
-            class="flex px-2 rounded-full text-gray-500 hover:text-pink-500 hover:bg-gray-100"
-            title="Update answer"
-          >
-            <icon-edit></icon-edit>
-          </button>
-          <button
-            @click="onDelete"
-            class="flex px-2 rounded-full text-gray-500 hover:text-pink-500 hover:bg-gray-100"
-          >
-            <!-- Show spinner when delete button is clicked -->
-            <icon-spinner
-              v-if="loading_delete && ticks_delete < 4"
-              class="text-pink-500"
-            ></icon-spinner>
-            <icon-spinner
-              v-else-if="loading_delete"
-              class="text-green-500"
-            ></icon-spinner>
-            <icon-delete v-else></icon-delete>
-          </button>
+      <div class="flex justify-between pb-2">
+        <div>
+          <h3 class="inline font-semibold" :title="answer.author">
+            <router-link :to="authorRoute" class="hover:underline">
+              {{ answer.author_display }}
+            </router-link>
+          </h3>
+          <span class="text-gray-500"> • </span>
+          <time class="text-gray-500 text-sm" :title="answer.created_at">
+            {{ answer.created_ago }}
+          </time>
         </div>
-        <div v-if="isMyQuestion">
+
+        <div class="flex">
+          <div class="flex" v-if="isMyAnswer">
+            <button
+              @click="isEditing = true"
+              class="flex px-2 rounded-full text-gray-500 hover:text-pink-500 hover:bg-gray-100"
+              title="Update answer"
+            >
+              <icon-edit></icon-edit>
+            </button>
+            <button
+              @click="onDelete"
+              class="flex px-2 rounded-full text-gray-500 hover:text-pink-500 hover:bg-gray-100"
+            >
+              <!-- Show spinner when delete button is clicked -->
+              <icon-spinner
+                v-if="loading_delete && ticks_delete < 4"
+                class="text-pink-500"
+              ></icon-spinner>
+              <icon-spinner
+                v-else-if="loading_delete"
+                class="text-green-500"
+              ></icon-spinner>
+              <icon-delete v-else></icon-delete>
+            </button>
+          </div>
           <button
-            v-if="isBest"
-            class="flex px-2 rounded-full text-green-300 hover:text-green-300 hover:bg-green-100"
+            v-if="isSolution"
+            class="flex py-[3px] px-2 rounded-full text-pink-700"
             title="Select answer"
+            disabled
           >
             <icon-check></icon-check>
           </button>
           <button
-            v-else
+            v-else-if="isMyQuestion"
             @click="onSelect"
             class="flex py-[3px] px-2 rounded-full text-gray-500 hover:text-pink-500 hover:bg-gray-100"
             title="Select answer"
           >
             <icon-check></icon-check>
           </button>
+          <button
+            v-else
+            class="flex py-[3px] px-2 rounded-full text-gray-500"
+            title="Select answer"
+            disabled
+          >
+            <icon-check></icon-check>
+          </button>
         </div>
       </div>
+      <p class="whitespace-pre-wrap" v-text="answer.content"></p>
     </div>
-    <p class="whitespace-pre-wrap" v-text="answer.content"></p>
   </div>
 </template>

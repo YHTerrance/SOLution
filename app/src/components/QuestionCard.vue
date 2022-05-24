@@ -26,7 +26,8 @@ const showAnswerModal = ref(false);
 const isEditing = ref(false);
 const isMyQuestion = computed(
   () =>
-    wallet.value && wallet.value.publicKey.toBase58() === question.value.author.toBase58()
+    wallet.value &&
+    wallet.value.publicKey.toBase58() === question.value.author.toBase58()
 );
 const authorRoute = computed(() => {
   if (isMyQuestion.value) {
@@ -77,14 +78,6 @@ const copyQuestionUrl = (questionBase58PublicKey) => {
   else status.value.activate("danger", msg[1]);
   setTimeout(() => status.value.deactivate(), 5000);
 };
-
-const hasSolution = ref(0);
-const onSelect = async () => {
-  hasSolution.value = 1;
-};
-const onDeleteSolution = async () => {
-  hasSolution.value = 0;
-};
 </script>
 
 <template>
@@ -123,14 +116,21 @@ const onDeleteSolution = async () => {
       ></icon-share>
     </div>
 
-    <answer-list v-show="answers.length + hasSolution" v-model:answers="answers" :question="question" @select="onSelect" @deleteSelection="onDeleteSolution"></answer-list>
+    <answer-list
+      v-show="answers.length"
+      :answers="answers"
+      :question="question"
+    ></answer-list>
     <answer-modal
       :show="showAnswerModal"
       :targetQuestion="question"
       @close="showAnswerModal = false"
       @added="addAnswer"
     >
-      <question-body :question="question" :authorRoute="authorRoute"></question-body>
+      <question-body
+        :question="question"
+        :authorRoute="authorRoute"
+      ></question-body>
     </answer-modal>
     <toast-item :status="status"></toast-item>
   </div>
