@@ -4,7 +4,7 @@ use anchor_lang::solana_program::native_token::LAMPORTS_PER_SOL;
 const BASE_FEE_LAMPORTS: u64 = LAMPORTS_PER_SOL / 1000;
 const MIN_REWARD_LAMPORTS: u64 = LAMPORTS_PER_SOL / 1000;
 
-declare_id!("AQJ7RmbJtwGHru6aimiLriPZ4gTs7q5NnzeetyWgNfxo");
+declare_id!("97qP2WfmsqrYwrQ1s5APNQ4RxwrBbmS2v48UzG2cUZnw");
 
 #[error_code]
 pub enum ErrorCode {
