@@ -42,10 +42,10 @@ const onSelect = async (bestAnswer) => {
 <template>
   <div class="mt-6 pl-4 border-l-2 border-pink-100">
     <div v-if="solution !== undefined">
-      <answer-card :answer="solution" :question="question" @delete="onDeleteSolution"></answer-card>
+      <answer-card :answer="solution" :question="question" :isBest="true" @delete="onDeleteSolution"></answer-card>
     </div>
     <div v-for="answer in orderedAnswers" :key="answer.key">
-      <answer-card :answer="answer" :question="question" @delete="onDelete" @select="onSelect"></answer-card>
+      <answer-card :answer="answer" :question="question" :isBest="false" @delete="onDelete" @select="onSelect"></answer-card>
     </div>
   </div>
 </template>

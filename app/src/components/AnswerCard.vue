@@ -12,9 +12,10 @@ import { useWorkspace } from "@/composables";
 const props = defineProps({
   question: Object,
   answer: Object,
+  isBest: Boolean,
 });
 const { wallet } = useWorkspace();
-const { question, answer } = toRefs(props);
+const { question, answer, isBest } = toRefs(props);
 
 const isEditing = ref(false);
 
@@ -53,6 +54,7 @@ const onDelete = async () => {
   }
 };
 
+// TODO: make sure only the author can choose the best answer
 const onSelect = async() => {
   try {
     await selectSolution(question, answer.value.publicKey);
@@ -81,6 +83,13 @@ const onSelect = async() => {
   <div class="flex justify-between py-2">
     <div>
       <button
+        v-if="isBest"
+        @click="onSelect"
+        class="px-2 rounded-full text-green-300 hover:text-green-300 hover:bg-green-100"
+        title="Select answer"
+      ><icon-check></icon-check></button>
+      <button
+        v-else
         @click="onSelect"
         class="px-2 rounded-full text-gray-500 hover:text-pink-500 hover:bg-gray-100"
         title="Select answer"
