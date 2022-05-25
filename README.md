@@ -4,8 +4,8 @@
 
 When developing this project, please follow the following best practice.
 
-* Backend (Smart Contract): Should follow the test-driven approach. Write tests and make sure all the tests pass.
-* Frontend: If you are unfamiliar with Vue, follow this [tutorial](https://vuejs.org/tutorial/#step-1). Note that the project is developed using **composition** and **SFC**.
+-   Backend (Smart Contract): Should follow the test-driven approach. Write tests and make sure all the tests pass.
+-   Frontend: If you are unfamiliar with Vue, follow this [tutorial](https://vuejs.org/tutorial/#step-1). Note that the project is developed using **composition** and **SFC**.
 
 Main reference tutorial: [Link](https://lorisleiva.com/create-a-solana-dapp-from-scratch)
 
@@ -21,12 +21,16 @@ Main reference tutorial: [Link](https://lorisleiva.com/create-a-solana-dapp-from
 -   **`tests/`**: tests that is run against the Rust backend
 -   **`Anchor.toml`**: main configuration file for Anchor
 
+## Resources
+
+-   [Quick Developer Docs](https://hackmd.io/vNTooMzwQ_uJdSPPijLu0w)
+
 ## Development Cycle
 
 ```bash
 # Make sure you’re on the localnet.
 solana config set --url localhost
-# And check your Anchor.toml file.
+# And check your Anchor.toml file. (check keypair path and network of use)
 
 # Code…
 
@@ -35,6 +39,7 @@ anchor test
 
 # Build, deploy and start a local ledger.
 anchor localnet
+
 # Or
 
 # -r resets the validator to genesis (or it will preload from test-ledger/)
@@ -66,7 +71,3 @@ anchor deploy
 # Push your code to the main branch to auto-deploy on AWS S3.
 git push
 ```
-
-## Useful Documentation
-
--   [@project-serum/anchor](https://github.com/project-serum/anchor)
