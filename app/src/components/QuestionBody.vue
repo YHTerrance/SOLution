@@ -3,6 +3,7 @@ import { toRefs } from "vue";
 import IconEdit from "@/components/atoms/IconEdit.vue";
 import IconDelete from "@/components/atoms/IconDelete.vue";
 import IconSpinner from "@/components/atoms/IconSpinner.vue";
+import MarkdownContent from "@/components/MarkdownContent.vue";
 
 const props = defineProps({
   question: Object,

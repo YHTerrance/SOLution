@@ -10,6 +10,7 @@ import { deleteAnswer, selectSolution, redeemReward } from "@/api";
 import { useWorkspace } from "@/composables";
 import { BASE_FEE_LAMPORTS } from "@/const";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import MarkdownContent from "@/components/MarkdownContent.vue";
 
 const props = defineProps({
   question: Object,
