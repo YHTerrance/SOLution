@@ -1,19 +1,16 @@
 <script setup>
 import { toRefs } from "vue";
 import IconEdit from "@/components/atoms/IconEdit.vue";
-import IconDelete from "@/components/atoms/IconDelete.vue";
-import IconSpinner from "@/components/atoms/IconSpinner.vue";
 
 const props = defineProps({
   question: Object,
   authorRoute: Object,
   isMyQuestion: Boolean,
-  onDelete: Function,
   loading_delete: Boolean,
   ticks_delete: Number,
 });
 
-const { question, authorRoute, isMyQuestion, onDelete } = toRefs(props);
+const { question, authorRoute, isMyQuestion } = toRefs(props);
 // Actions.
 const emit = defineEmits(["edit"]);
 </script>
@@ -47,21 +44,6 @@ const emit = defineEmits(["edit"]);
           title="Update question"
         >
           <icon-edit></icon-edit>
-        </button>
-        <button
-          @click="onDelete"
-          class="flex px-2 rounded-full text-gray-500 hover:text-pink-500 hover:bg-gray-100"
-        >
-          <!-- Show spinner when delete button is clicked -->
-          <icon-spinner
-            v-if="loading_delete && ticks_delete < 4"
-            class="text-pink-500"
-          ></icon-spinner>
-          <icon-spinner
-            v-else-if="loading_delete"
-            class="text-green-500"
-          ></icon-spinner>
-          <icon-delete v-else></icon-delete>
         </button>
       </div>
     </div>
