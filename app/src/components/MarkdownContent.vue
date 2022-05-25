@@ -14,9 +14,16 @@ const plugins = ref([
       ])
 </script>
 
+<style>
+div.example ul {
+  list-style-position: inside;
+  list-style-type: circle;
+}
+</style>
+
 <template>
   <div>
-    <Markdown :source="text" :plugins="plugins" />
+    <Markdown :source="text" :plugins="plugins" class="example"/>
   </div>
 </template>
 
