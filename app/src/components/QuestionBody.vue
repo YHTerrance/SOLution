@@ -66,7 +66,9 @@ const emit = defineEmits(["edit"]);
       </div>
     </div>
 
-    <p class="whitespace-pre-wrap" v-text="question.content"></p>
+  <MarkdownContent
+    :text="question.content"
+  ></MarkdownContent>
 
     <router-link
       v-if="question.topic"

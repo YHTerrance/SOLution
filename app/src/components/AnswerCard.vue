@@ -198,7 +198,9 @@ const onRedeem = async () => {
           </button>
         </div>
       </div>
-      <p class="whitespace-pre-wrap" v-text="answer.content"></p>
+      <MarkdownContent
+        :text="question.content"
+      ></MarkdownContent>
     </div>
   </div>
 </template>
