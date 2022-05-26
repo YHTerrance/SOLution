@@ -97,7 +97,6 @@ const { connected } = useWallet();
       </router-link>
     </div>
     <div class="fixed bottom-8 right-8 md:static w-48 md:w-full">
-      <!-- TODO: Connect wallet -->
       <wallet-multi-button></wallet-multi-button>
     </div>
   </aside>
