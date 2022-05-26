@@ -250,7 +250,7 @@ const STRING_LENGTH_PREFIX: usize = 4; // Stores the size of the string
 const MAX_TOPIC_LENGTH: usize = 50 * 4; // 50 chars max
 const MAX_CONTENT_LENGTH: usize = 280 * 4; // 280 chars max
 const AMOUNT_LENGTH: usize = 8;
-const BOOL_LENGTH: usize = 1;
+const BOOL_LENGTH: usize = 4;
 
 impl Question {
   const LEN: usize = DISCRIMINATOR_LENGTH
