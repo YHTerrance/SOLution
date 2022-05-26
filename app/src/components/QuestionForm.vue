@@ -23,6 +23,7 @@ const { forcedTopic } = toRefs(props);
 const content = ref("");
 const topic = ref("");
 const amount = ref();
+const deposit = BASE_FEE_LAMPORTS / LAMPORTS_PER_SOL;
 const slugTopic = useSlug(topic);
 const effectiveTopic = computed(() => forcedTopic.value ?? slugTopic.value);
 
@@ -52,24 +53,33 @@ const ask = async () => {
   if (!canQuestion.value) return;
   loading.value = true;
   let question;
+  let storedValue;
   try {
+    storedValue = {
+      eff: effectiveTopic.value,
+      con: content.value,
+      amo: amount.value,
+    };
     question = await askQuestion(
       effectiveTopic.value,
       content.value,
-      amount.value,
+      amount.value + deposit,
       ticks
     );
     status.value.activate("success", "Successfully asked question");
+    topic.value = "";
+    content.value = "";
+    amount.value = undefined;
     emit("added", question);
   } catch (error) {
     console.log(error);
     status.value.activate("danger", "Failed to ask question");
+    topic.value = storedValue.eff;
+    content.value = storedValue.con;
+    amount.value = storedValue.amo;
     emit("failed", question);
   } finally {
     loading.value = false;
-    topic.value = "";
-    content.value = "";
-    amount.value = undefined;
     setTimeout(() => status.value.deactivate(), 5000);
   }
 };
@@ -129,21 +139,39 @@ const ask = async () => {
 
       <!-- question button. -->
       <div class="relative z-0 w-1/2 my-6 group">
-        <input
-          v-model="amount"
-          type="number"
-          name="charge"
-          id="charge"
-          class="block py-2.5 px-0 w-full text-sm text-pink-900 bg-transparent border-0 border-b-2 border-pink-300 appearance-none dark:text-white dark:border-pink-600 dark:focus:border-pink-500 focus:outline-none focus:ring-0 focus:border-pink-600 peer"
-          placeholder=" "
-          required
-        />
-        <label
-          for="charge"
-          class="peer-focus:font-medium absolute text-sm text-pink-500 dark:text-pink-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-pink-600 peer-focus:dark:text-pink-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-        >
-          Charge (min: {{ BASE_FEE_LAMPORTS / LAMPORTS_PER_SOL }} SOL)</label
-        >
+        <div class="inline-block w-5/12 p-2">
+          <label
+            for="charge"
+            class="peer-focus:font-medium absolute text-sm text-pink-500 dark:text-pink-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-pink-600 peer-focus:dark:text-pink-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+          >
+            Reward (required)</label
+          >
+          <input
+            v-model="amount"
+            type="number"
+            name="charge"
+            id="charge"
+            placeholder=" "
+            class="block py-2.5 px-0 w-full text-sm text-pink-900 bg-transparent border-0 border-b-2 border-pink-300 appearance-none dark:text-white dark:border-pink-600 dark:focus:border-pink-500 focus:outline-none focus:ring-0 focus:border-pink-600 peer"
+            required
+          />
+        </div>
+        <span class="inline-block w-2/12 text-center text-lg">+</span>
+        <div class="inline-block w-5/12 p-2">
+          <label
+            for="deposit"
+            class="peer-focus:font-medium absolute text-sm text-pink-500 dark:text-pink-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-pink-600 peer-focus:dark:text-pink-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+          >
+            Deposit (fixed)</label
+          >
+          <input
+            type="text"
+            name="deposit"
+            :value="deposit"
+            class="block py-2.5 px-0 w-full text-sm text-pink-900 bg-transparent border-0 border-b-2 border-pink-300 appearance-none dark:text-white dark:border-pink-600 dark:focus:border-pink-500 focus:outline-none focus:ring-0 focus:border-pink-600 peer"
+            readonly
+          />
+        </div>
       </div>
     </div>
 
