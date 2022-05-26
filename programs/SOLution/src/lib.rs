@@ -250,7 +250,7 @@ const STRING_LENGTH_PREFIX: usize = 4; // Stores the size of the string
 const MAX_TOPIC_LENGTH: usize = 50 * 4; // 50 chars max
 const MAX_CONTENT_LENGTH: usize = 280 * 4; // 280 chars max
 const AMOUNT_LENGTH: usize = 8;
-const BOOL_LENGTH: usize = 1;
+const BOOL_LENGTH: usize = 4;
 
 impl Question {
   const LEN: usize = DISCRIMINATOR_LENGTH
@@ -264,10 +264,10 @@ impl Question {
 
 impl Answer {
   const LEN: usize = DISCRIMINATOR_LENGTH
-        + PUBLIC_KEY_LENGTH // Source question
-        + PUBLIC_KEY_LENGTH // Source question author
         + PUBLIC_KEY_LENGTH // Author
         + TIMESTAMP_LENGTH // Timestamp
+        + PUBLIC_KEY_LENGTH // Target Question
+        + PUBLIC_KEY_LENGTH // Target Author
         + STRING_LENGTH_PREFIX + MAX_CONTENT_LENGTH // Content
         + AMOUNT_LENGTH // Amount
         + BOOL_LENGTH; // Boolean recording if it is the solution
