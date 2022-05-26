@@ -1,7 +1,6 @@
 import { useWorkspace } from "@/composables";
 import { Answer } from "@/models";
 import { FILTER } from "@/const";
-import * as bs58 from "bs58";
 
 export const fetchAnswers = async (filters = []) => {
   const { program } = useWorkspace();
