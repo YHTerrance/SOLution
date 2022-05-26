@@ -88,13 +88,18 @@ const ask = async () => {
 <template>
   <div v-if="connected" class="px-8 py-4 border-b">
     <!-- Content field. -->
-    <textarea
-      ref="textarea"
-      rows="1"
-      class="text-xl w-full focus:outline-none resize-none mb-3 border-none focus:ring-transparent"
-      placeholder="What's happening?"
-      v-model="content"
-    ></textarea>
+    <div class="w-full flex">
+      <textarea
+        ref="textarea"
+        rows="1"
+        class="text-xl grow focus:outline-none resize-none overflow-clip mb-3 p-3 focus:ring-transparent border-gray-200 border-0 border-b-2"
+        placeholder="What's happening?"
+        v-model="content"
+      ></textarea>
+      <div class="text-xl mb-3 ml-3 py-3">
+        <span :class="characterLimitColour"> {{ characterLimit }} left </span>
+      </div>
+    </div>
 
     <div class="flex flex-wrap items-center justify-between -m-2">
       <!-- Topic field. -->
@@ -125,16 +130,8 @@ const ask = async () => {
       </div>
       <div class="flex items-center space-x-6 m-2 ml-auto">
         <!-- Character limit. -->
-        <div :class="characterLimitColour">{{ characterLimit }} left</div>
 
-        <submit-button
-          :loading="loading"
-          :enabled="canQuestion"
-          :ticks="ticks"
-          @click="ask"
-        >
-          Ask
-        </submit-button>
+
       </div>
 
       <!-- question button. -->
@@ -180,6 +177,16 @@ const ask = async () => {
           > {{ (amount ?? 0) + deposit }}
           </span>
         </div>
+      </div>
+      <div class="w-full flex justify-end mb-4">
+        <submit-button
+          :loading="loading"
+          :enabled="canQuestion"
+          :ticks="ticks"
+          @click="ask"
+        >
+          Ask
+        </submit-button>
       </div>
     </div>
 
