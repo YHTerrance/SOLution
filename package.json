@@ -1,6 +1,7 @@
 {
   "scripts": {
     "test": "anchor test --provider.cluster localnet",
+    "run-test": "anchor run test --provider.cluster localnet",
     "build": "anchor build --provider.cluster localnet",
     "build:devnet": "anchor build --provider.cluster devnet",
     "build:mainnet": "anchor build --provider.cluster mainnet",
