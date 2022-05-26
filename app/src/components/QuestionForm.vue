@@ -92,7 +92,7 @@ const ask = async () => {
       <textarea
         ref="textarea"
         rows="1"
-        class="text-xl grow focus:outline-none resize-none overflow-clip mb-3 p-3 focus:ring-transparent border-gray-200 border-0 border-b-2"
+        class="text-xl grow focus:outline-none resize-none overflow-clip mb-3 p-3 focus:border-pink-600 focus:ring-transparent border-gray-200 border-0 border-b-2"
         placeholder="What's happening?"
         v-model="content"
       ></textarea>
@@ -130,8 +130,6 @@ const ask = async () => {
       </div>
       <div class="flex items-center space-x-6 m-2 ml-auto">
         <!-- Character limit. -->
-
-
       </div>
 
       <!-- question button. -->
@@ -162,7 +160,8 @@ const ask = async () => {
           >
           <span
             class="block py-2.5 px-0 w-full text-sm text-pink-900 bg-transparent border-0 border-b-2 border-pink-300 appearance-none dark:text-white dark:border-pink-600 dark:focus:border-pink-500 focus:outline-none focus:ring-0 focus:border-pink-600 peer"
-          > {{ deposit }}
+          >
+            {{ deposit }}
           </span>
         </div>
         <span class="inline-block w-1/12 text-center text-lg">=</span>
@@ -174,7 +173,8 @@ const ask = async () => {
           >
           <span
             class="block py-2.5 px-0 w-full text-sm text-pink-900 bg-transparent border-0 border-b-2 border-pink-300 appearance-none dark:text-white dark:border-pink-600 dark:focus:border-pink-500 focus:outline-none focus:ring-0 focus:border-pink-600 peer"
-          > {{ (amount ?? 0) + deposit }}
+          >
+            {{ (amount ?? 0) + deposit }}
           </span>
         </div>
       </div>
