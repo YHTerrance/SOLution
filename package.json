@@ -1,10 +1,7 @@
 {
   "scripts": {
     "test": "anchor test --provider.cluster localnet",
-<<<<<<< HEAD
     "run-test": "anchor run test --provider.cluster localnet",
-=======
->>>>>>> 2fba8d2 (Add new build deploy script in yarn to avoid misuse)
     "build": "anchor build --provider.cluster localnet",
     "build:devnet": "anchor build --provider.cluster devnet",
     "build:mainnet": "anchor build --provider.cluster mainnet",
