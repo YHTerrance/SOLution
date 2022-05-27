@@ -2,6 +2,7 @@
 import { WalletMultiButton, useWallet } from "solana-wallets-vue";
 import IconHome from "@/components/atoms/IconHome";
 import IconTopic from "@/components/atoms/IconTopic";
+import IconGift from "@/components/atoms/IconGift";
 import IconUsers from "@/components/atoms/IconUsers";
 import IconProfile from "@/components/atoms/IconProfile";
 const { connected } = useWallet();
@@ -28,14 +29,8 @@ const { connected } = useWallet();
         v-slot="{ isActive }"
       >
         <icon-home
-          v-if="isActive"
           class="h-8 w-8 text-gray-700"
-          v-bind:isActive="true"
-        ></icon-home>
-        <icon-home
-          v-else
-          class="h-8 w-8 text-gray-700"
-          v-bind:isActive="false"
+          v-bind:isActive="isActive"
         ></icon-home>
         <div class="text-xl hidden md:block">Home</div>
       </router-link>
@@ -46,16 +41,22 @@ const { connected } = useWallet();
         v-slot="{ isActive }"
       >
         <icon-topic
-          v-if="isActive"
           class="h-8 w-8 text-gray-700"
-          v-bind:isActive="true"
-        ></icon-topic>
-        <icon-topic
-          v-else
-          class="h-8 w-8 text-gray-700"
-          v-bind:isActive="false"
+          v-bind:isActive="isActive"
         ></icon-topic>
         <div class="text-xl hidden md:block">Topics</div>
+      </router-link>
+      <router-link
+        :to="{ name: 'Rewards' }"
+        class="rounded-full hover:bg-gray-100 p-3 md:w-full inline-flex items-center space-x-4"
+        active-class="font-bold"
+        v-slot="{ isActive }"
+      >
+        <icon-gift
+          class="h-8 w-8 text-gray-700"
+          v-bind:isActive="isActive"
+        ></icon-gift>
+        <div class="text-xl hidden md:block">Rewards</div>
       </router-link>
       <router-link
         :to="{ name: 'Users' }"
@@ -64,14 +65,8 @@ const { connected } = useWallet();
         v-slot="{ isActive }"
       >
         <icon-users
-          v-if="isActive"
           class="h-8 w-8 text-gray-700"
-          v-bind:isActive="true"
-        ></icon-users>
-        <icon-users
-          v-else
-          class="h-8 w-8 text-gray-700"
-          v-bind:isActive="false"
+          v-bind:isActive="isActive"
         ></icon-users>
         <div class="text-xl hidden md:block">Users</div>
       </router-link>
@@ -84,14 +79,8 @@ const { connected } = useWallet();
         v-slot="{ isActive }"
       >
         <icon-profile
-          v-if="isActive"
           class="h-8 w-8 text-gray-700"
-          v-bind:isActive="true"
-        ></icon-profile>
-        <icon-profile
-          v-else
-          class="h-8 w-8 text-gray-700"
-          v-bind:isActive="false"
+          v-bind:isActive="isActive"
         ></icon-profile>
         <div class="text-xl hidden md:block">Profile</div>
       </router-link>
