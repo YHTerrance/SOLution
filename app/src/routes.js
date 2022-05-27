@@ -10,6 +10,11 @@ export default [
     component: require("@/components/PageTopics").default,
   },
   {
+    name: "Rewards",
+    path: "/topics/:rewards?",
+    component: require("@/components/PageRewards").default,
+  },
+  {
     name: "Users",
     path: "/users/:author?",
     component: require("@/components/PageUsers").default,
