@@ -66,7 +66,7 @@ const update = async () => {
 <template>
   <div>
     <div
-      class="fixed w-full h-full top-0 left-0 flex items-center justify-center"
+      class="fixed z-[20] w-full h-full top-0 left-0 flex items-center justify-center"
     >
       <div
         @click.self="close_modal()"
