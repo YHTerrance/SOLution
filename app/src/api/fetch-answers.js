@@ -18,7 +18,7 @@ export const targetQuestionFilter = (targetQuestionBase58PublicKey) => ({
   },
 });
 
-export const authorFilter = (authorBase58PublicKey) => ({
+export const answerAuthorFilter = (authorBase58PublicKey) => ({
   memcmp: {
     offset: FILTER.discriminator_length, // Discriminator
     bytes: authorBase58PublicKey,
