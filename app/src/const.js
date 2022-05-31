@@ -1,8 +1,9 @@
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 const BASE_FEE_LAMPORTS = LAMPORTS_PER_SOL / 1000;
+const START_TIME = 1654025350;
 
-export { BASE_FEE_LAMPORTS };
+export { BASE_FEE_LAMPORTS, START_TIME };
 
 export const FILTER = {
   discriminator_length: 8,

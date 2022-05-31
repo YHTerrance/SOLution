@@ -3,7 +3,7 @@ import { computed, ref } from "vue";
 import { Question } from "@/models";
 import bs58 from "bs58";
 import { BN } from "@project-serum/anchor";
-import { FILTER } from "@/const";
+import { FILTER, START_TIME } from "@/const";
 
 export const fetchQuestions = async (filters = []) => {
   const { program } = useWorkspace();
@@ -71,6 +71,7 @@ export const paginateQuestions = (
     console.log(allQuestionsWithTimestamps);
 
     return allQuestionsWithTimestamps
+      .filter((a) => a.timestamp > START_TIME)
       .sort((a, b) => b.timestamp.cmp(a.timestamp))
       .map(({ pubkey }) => pubkey);
   };
