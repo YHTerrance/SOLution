@@ -14,6 +14,7 @@ const props = defineProps({
   question: Object,
   answer: Object,
   isSolution: Boolean,
+  selectable: Boolean,
 });
 const { wallet } = useWorkspace();
 const { question, answer, isSolution } = toRefs(props);
@@ -24,12 +25,6 @@ const isMyAnswer = computed(
   () =>
     wallet.value &&
     wallet.value.publicKey.toBase58() === answer.value.author.toBase58()
-);
-
-const isMyQuestion = computed(
-  () =>
-    wallet.value &&
-    wallet.value.publicKey.toBase58() === question.value.author.toBase58()
 );
 
 const authorRoute = computed(() => {
@@ -138,28 +133,16 @@ const onRedeem = async () => {
             </button>
           </div>
           <button
-            v-if="isSolution"
-            class="flex py-[3px] px-2 rounded-full text-pink-700"
-            title="Select answer"
-            disabled
-          >
-            <icon-check></icon-check>
-          </button>
-          <button
-            v-else-if="isMyQuestion"
+            v-if="selectable"
             @click="onSelect"
-            class="flex py-[3px] px-2 rounded-full text-gray-500 hover:text-pink-500 hover:bg-gray-100"
+            class="flex relative py-[3px] px-2 rounded-full text-gray-500 hover:text-pink-500 hover:bg-gray-100"
             title="Select answer"
           >
             <icon-check></icon-check>
-          </button>
-          <button
-            v-else
-            class="flex py-[3px] px-2 rounded-full text-gray-500"
-            title="Select answer"
-            disabled
-          >
-            <icon-check></icon-check>
+            <span class="flex absolute justify-center items-center -top-2 -right-2 w-4 h-4">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-purple-500"></span>
+            </span>
           </button>
         </div>
       </div>
