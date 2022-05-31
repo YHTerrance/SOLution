@@ -264,10 +264,10 @@ impl Question {
 
 impl Answer {
   const LEN: usize = DISCRIMINATOR_LENGTH
-        + PUBLIC_KEY_LENGTH // Source question
-        + PUBLIC_KEY_LENGTH // Source question author
         + PUBLIC_KEY_LENGTH // Author
         + TIMESTAMP_LENGTH // Timestamp
+        + PUBLIC_KEY_LENGTH // Target Question
+        + PUBLIC_KEY_LENGTH // Target Author
         + STRING_LENGTH_PREFIX + MAX_CONTENT_LENGTH // Content
         + AMOUNT_LENGTH // Amount
         + BOOL_LENGTH; // Boolean recording if it is the solution
