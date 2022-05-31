@@ -163,9 +163,7 @@ const onRedeem = async () => {
           </button>
         </div>
       </div>
-      <MarkdownContent
-        :text="question.content"
-      ></MarkdownContent>
+      <MarkdownContent :text="answer.content"></MarkdownContent>
     </div>
   </div>
 </template>
