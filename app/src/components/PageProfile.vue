@@ -27,15 +27,17 @@ const addQuestion = (question) => questions.value.push(question);
 </script>
 
 <template>
-  <!-- TODO: Check connected wallet -->
-  <div v-if="wallet" class="border-b px-8 py-4 bg-gray-50">
-    {{ wallet.publicKey.toBase58() }}
+  <div>
+    <!-- TODO: Check connected wallet -->
+    <div v-if="wallet" class="border-b px-8 py-4 bg-gray-50">
+      {{ wallet.publicKey.toBase58() }}
+    </div>
+    <question-form @added="addQuestion"></question-form>
+    <question-list
+      :questions="questions"
+      :loading="loading"
+      :has-more="hasNextPage"
+      @more="getNextPage"
+    ></question-list>
   </div>
-  <question-form @added="addQuestion"></question-form>
-  <question-list
-    v-model:questions="questions"
-    :loading="loading"
-    :has-more="hasNextPage"
-    @more="getNextPage"
-  ></question-list>
 </template>
