@@ -26,13 +26,17 @@ watchEffect(async () => {
       continue;
     }
 
-    const answers = await fetchAnswers([targetQuestionFilter(question.publicKey.toBase58())]);
+    const answers = await fetchAnswers([
+      targetQuestionFilter(question.publicKey.toBase58()),
+    ]);
     if (answers.length === 0) {
       // no answers, skip
       continue;
     }
 
-    const solution = answers.filter(answer => answer.key === question.solution.toBase58())[0];
+    const solution = answers.filter(
+      (answer) => answer.key === question.solution.toBase58()
+    )[0];
     if (solution !== undefined && solution.amount <= 0) {
       // already has solution and no rewards to claim, skip
       continue;
@@ -51,18 +55,19 @@ watchEffect(async () => {
 
 <template>
   <div>
-    <div v-if="loading" class="p-8 text-gray-500 text-center">
-      Loading...
-    </div>
+    <div v-if="loading" class="p-8 text-gray-500 text-center">Loading...</div>
     <div v-else-if="hasError" class="p-8 text-gray-500 text-center">
       Error on loading questions QQ
     </div>
-    <div v-else-if="myQuestions.length === 0" class="p-8 text-gray-500 text-center">
-      There is currently no rewards to claim. Go asking questions!
+    <div
+      v-else-if="myQuestions.length === 0"
+      class="p-8 text-gray-500 text-center"
+    >
+      There is currently no rewards to claim. Go ask questions!
     </div>
     <div v-else class="divide-y">
       <div class="p-8 text-gray-500 text-center text-lg">
-        Select the answer for your problems and claim your deposit!
+        These are the claimable rewards below. Claim them as you want!
       </div>
       <question-card
         v-for="question in myQuestions"
