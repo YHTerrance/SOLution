@@ -5,6 +5,7 @@ import IconTopic from "@/components/atoms/IconTopic";
 import IconGift from "@/components/atoms/IconGift";
 import IconUsers from "@/components/atoms/IconUsers";
 import IconProfile from "@/components/atoms/IconProfile";
+import IconLogo from "@/components/atoms/IconLogo.vue";
 const { connected } = useWallet();
 </script>
 
@@ -16,10 +17,7 @@ const { connected } = useWallet();
       :to="{ name: 'Home' }"
       class="inline-block rounded-full hover:bg-gray-100 p-3 md:self-start"
     >
-      <icon-topic
-        class="text-pink-500 h-8 md:h-10 w-8 md:w-10"
-        v-bind:isActive="true"
-      />
+      <icon-logo class="text-pink-500 h-8 md:h-[150px] w-8 md:w-[150px]" />
     </router-link>
     <div class="flex flex-col items-center md:items-stretch space-y-2">
       <router-link

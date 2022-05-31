@@ -92,11 +92,11 @@ const ask = async () => {
       <textarea
         ref="textarea"
         rows="1"
-        class="text-xl grow focus:outline-none resize-none overflow-clip mb-3 p-3 focus:border-pink-600 focus:ring-transparent border-gray-200 border-0 border-b-2"
+        class="md:text-xl text-md grow focus:outline-none resize-none overflow-clip mb-3 px-3 focus:border-pink-600 focus:ring-transparent border-gray-200 border-0 border-b-2"
         placeholder="What's happening?"
         v-model="content"
       ></textarea>
-      <div class="text-xl mb-3 ml-3 py-3">
+      <div class="md:text-xl text-md mb-3 ml-3 py-3">
         <span :class="characterLimitColour"> {{ characterLimit }} left </span>
       </div>
     </div>
