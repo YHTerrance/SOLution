@@ -1,15 +1,14 @@
 <script setup>
 import { toRefs, computed, ref } from "vue";
 import IconEdit from "@/components/atoms/IconEdit.vue";
-import IconDelete from "@/components/atoms/IconDelete.vue";
-import IconSpinner from "@/components/atoms/IconSpinner.vue";
 import IconCheck from "@/components/atoms/IconCheck.vue";
 import IconSolana from "@/components/atoms/IconSolana.vue";
 import AnswerModalUpdate from "@/components/AnswerModalUpdate.vue";
-import { deleteAnswer, selectSolution, redeemReward } from "@/api";
+import { selectSolution, redeemReward } from "@/api";
 import { useWorkspace } from "@/composables";
 import { BASE_FEE_LAMPORTS } from "@/const";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import MarkdownContent from "@/components/MarkdownContent.vue";
 
 const props = defineProps({
   question: Object,
@@ -20,9 +19,6 @@ const { wallet } = useWorkspace();
 const { question, answer, isSolution } = toRefs(props);
 
 const isEditing = ref(false);
-
-const loading_delete = ref(false);
-const ticks_delete = ref(0);
 
 const isMyAnswer = computed(
   () =>
@@ -46,22 +42,6 @@ const authorRoute = computed(() => {
     };
   }
 });
-
-// Actions.
-const emit = defineEmits(["delete", "fail", "select"]);
-
-const onDelete = async () => {
-  console.log("Deleting answer...");
-  loading_delete.value = true;
-  try {
-    await deleteAnswer(answer.value, ticks_delete);
-    emit("delete", answer.value);
-  } catch (error) {
-    console.log(error);
-  } finally {
-    loading_delete.value = false;
-  }
-};
 
 const onSelect = async () => {
   try {
@@ -156,21 +136,6 @@ const onRedeem = async () => {
             >
               <icon-edit></icon-edit>
             </button>
-            <button
-              @click="onDelete"
-              class="flex px-2 rounded-full text-gray-500 hover:text-pink-500 hover:bg-gray-100"
-            >
-              <!-- Show spinner when delete button is clicked -->
-              <icon-spinner
-                v-if="loading_delete && ticks_delete < 4"
-                class="text-pink-500"
-              ></icon-spinner>
-              <icon-spinner
-                v-else-if="loading_delete"
-                class="text-green-500"
-              ></icon-spinner>
-              <icon-delete v-else></icon-delete>
-            </button>
           </div>
           <button
             v-if="isSolution"
@@ -198,7 +163,9 @@ const onRedeem = async () => {
           </button>
         </div>
       </div>
-      <p class="whitespace-pre-wrap" v-text="answer.content"></p>
+      <MarkdownContent
+        :text="question.content"
+      ></MarkdownContent>
     </div>
   </div>
 </template>

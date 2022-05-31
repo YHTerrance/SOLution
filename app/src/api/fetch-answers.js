@@ -1,5 +1,6 @@
 import { useWorkspace } from "@/composables";
 import { Answer } from "@/models";
+import { FILTER } from "@/const";
 
 export const fetchAnswers = async (filters = []) => {
   const { program } = useWorkspace();
@@ -10,9 +11,16 @@ export const fetchAnswers = async (filters = []) => {
 export const targetQuestionFilter = (targetQuestionBase58PublicKey) => ({
   memcmp: {
     offset:
-      8 + // Discriminator
-      32 + // Author
-      8, // timestamp
+      FILTER.discriminator_length + // Discriminator
+      FILTER.public_key_length + // Author
+      FILTER.timestamp_length, // timestamp
     bytes: targetQuestionBase58PublicKey,
+  },
+});
+
+export const answerAuthorFilter = (authorBase58PublicKey) => ({
+  memcmp: {
+    offset: FILTER.discriminator_length, // Discriminator
+    bytes: authorBase58PublicKey,
   },
 });
