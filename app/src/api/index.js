@@ -7,3 +7,4 @@ export * from "./update-question";
 export * from "./update-answer";
 export * from "./select-solution";
 export * from "./redeem-reward";
+export * from "./like";

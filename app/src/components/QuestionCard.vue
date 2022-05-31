@@ -1,7 +1,7 @@
 <script setup>
-import { toRefs, computed, ref } from "vue";
+import { toRefs, computed, ref, watchEffect } from "vue";
 import { useWorkspace } from "@/composables";
-import { fetchAnswers, targetQuestionFilter } from "@/api";
+import { fetchAnswers, targetQuestionFilter, like } from "@/api";
 import { copyUrl } from "./utils/copy.js";
 import { Status } from "@/models";
 import AnswerList from "@/components/AnswerList.vue";
@@ -24,9 +24,17 @@ const { question } = toRefs(props);
 const { wallet } = useWorkspace();
 const answers = ref([]);
 const loading = ref(true);
-const liked = ref(false);
 const showAnswerModal = ref(false);
 const isEditing = ref(false);
+const liked = ref(false);
+
+watchEffect(() => {
+  liked.value =
+    question?.value?.likes?.includes(wallet?.value?.publicKey) ?? false;
+  // TODO: Refer to like.js, because it does not record, everytime the website
+  // reflush, the like will disappear.
+});
+
 const isMyQuestion = computed(
   () =>
     wallet.value &&
@@ -63,6 +71,13 @@ const copyQuestionUrl = (questionBase58PublicKey) => {
   else status.value.activate("danger", msg[1]);
   setTimeout(() => status.value.deactivate(), 5000);
 };
+
+const onLike = async () => {
+  if (!liked.value) {
+    liked.value = true;
+  }
+  await like(question.value);
+};
 </script>
 
 <template>
@@ -85,7 +100,7 @@ const copyQuestionUrl = (questionBase58PublicKey) => {
       <icon-heart
         class="w-8 h-8 text-pink-500 cursor-pointer"
         :isActive="liked"
-        @click="liked = !liked"
+        @click="onLike"
       ></icon-heart>
       <icon-comment
         class="w-8 h-8 text-pink-500 cursor-pointer"
@@ -100,7 +115,17 @@ const copyQuestionUrl = (questionBase58PublicKey) => {
       ></icon-share>
 
       <span
-        class="bg-pink-100 text-pink-800 text-md font-medium inline-flex items-center px-2.5 py-1 rounded dark:bg-pink-200 dark:text-pink-800"
+        class="
+          bg-pink-100
+          text-pink-800 text-md
+          font-medium
+          inline-flex
+          items-center
+          px-2.5
+          py-1
+          rounded
+          dark:bg-pink-200 dark:text-pink-800
+        "
       >
         Rewards:
         <icon-solana class="mx-2"></icon-solana>

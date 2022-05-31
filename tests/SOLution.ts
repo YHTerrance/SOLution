@@ -72,7 +72,6 @@ describe("SOLution", () => {
       let before_balance = await getBalance(author.publicKey);
 
       let amount = new BN(LAMPORTS_PER_SOL);
-      console.log(`amount = ${amount}`);
       const question = await askQuestion(
         author,
         testTopic,
@@ -84,7 +83,6 @@ describe("SOLution", () => {
       );
 
       let after_balance = await getBalance(author.publicKey);
-      console.log(`delta = ${before_balance - after_balance}`);
 
       assert.closeTo(
         before_balance - after_balance,

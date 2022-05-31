@@ -173,6 +173,22 @@
         }
       ],
       "args": []
+    },
+    {
+      "name": "like",
+      "accounts": [
+        {
+          "name": "question",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "fan",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [

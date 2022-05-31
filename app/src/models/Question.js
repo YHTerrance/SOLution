@@ -9,6 +9,7 @@ export class Question {
     this.content = accountData.content;
     this.solution = accountData.solution;
     this.amount = accountData.amount;
+    this.likes = accountData.likes??[];
   }
 
   get key() {
