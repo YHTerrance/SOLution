@@ -8,6 +8,7 @@ import { selectSolution, redeemReward } from "@/api";
 import { useWorkspace } from "@/composables";
 import { BASE_FEE_LAMPORTS } from "@/const";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import MarkdownContent from "@/components/MarkdownContent.vue";
 
 const props = defineProps({
   question: Object,
@@ -162,7 +163,9 @@ const onRedeem = async () => {
           </button>
         </div>
       </div>
-      <p class="whitespace-pre-wrap" v-text="answer.content"></p>
+      <MarkdownContent
+        :text="question.content"
+      ></MarkdownContent>
     </div>
   </div>
 </template>

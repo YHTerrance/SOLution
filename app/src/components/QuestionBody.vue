@@ -1,6 +1,8 @@
 <script setup>
 import { toRefs } from "vue";
 import IconEdit from "@/components/atoms/IconEdit.vue";
+import MarkdownContent from "@/components/MarkdownContent.vue";
+
 
 const props = defineProps({
   question: Object,
@@ -48,7 +50,9 @@ const emit = defineEmits(["edit"]);
       </div>
     </div>
 
-    <p class="whitespace-pre-wrap" v-text="question.content"></p>
+  <MarkdownContent
+    :text="question.content"
+  ></MarkdownContent>
 
     <router-link
       v-if="question.topic"

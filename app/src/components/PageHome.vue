@@ -19,11 +19,13 @@ const addQuestion = (question) => questions.value.push(question);
 </script>
 
 <template>
-  <question-form @added="addQuestion"></question-form>
-  <question-list
-    v-model:questions="questions"
-    :loading="loading"
-    :has-more="hasNextPage"
-    @more="getNextPage"
-  ></question-list>
+  <div>
+    <question-form @added="addQuestion"></question-form>
+    <question-list
+      :questions="questions"
+      :loading="loading"
+      :has-more="hasNextPage"
+      @more="getNextPage"
+    ></question-list>
+  </div>
 </template>
