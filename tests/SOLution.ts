@@ -5,7 +5,7 @@ import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import * as bs58 from "bs58";
 import { SoLution } from "../target/types/so_lution";
 
-const RENT_MAX_APPROX = 15000000;
+const RENT_MAX_APPROX = 50000000;
 const BASE_FEE_LAMPORTS = LAMPORTS_PER_SOL / 1000;
 
 describe("SOLution", () => {
@@ -72,6 +72,7 @@ describe("SOLution", () => {
       let before_balance = await getBalance(author.publicKey);
 
       let amount = new BN(LAMPORTS_PER_SOL);
+      console.log(`amount = ${amount}`);
       const question = await askQuestion(
         author,
         testTopic,
@@ -83,6 +84,7 @@ describe("SOLution", () => {
       );
 
       let after_balance = await getBalance(author.publicKey);
+      console.log(`delta = ${before_balance - after_balance}`);
 
       assert.closeTo(
         before_balance - after_balance,
@@ -694,6 +696,29 @@ describe("SOLution", () => {
       ]);
       console.log(questionAccounts);
       assert.equal(questionAccounts.length, 10);
+    });
+
+    it("can like a question", async () => {
+      const topic = "babydoge";
+      const content = "to the moon or not?";
+      const author = program.provider.wallet;
+
+      // Create question and an answer under the question
+      const question = await askQuestion(author, topic, content);
+
+      // like
+      await program.rpc.like({
+        accounts: {
+          question: question.publicKey,
+          fan: program.provider.wallet.publicKey,
+        },
+      });
+      
+      const updatedQuestionAccount = await program.account.question.fetch(
+        question.publicKey
+      );
+      
+      assert.equal(updatedQuestionAccount.likes[0].toBase58(), program.provider.wallet.publicKey.toBase58());
     });
   });
 });

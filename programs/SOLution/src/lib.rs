@@ -42,6 +42,7 @@ pub mod so_lution {
     question.topic = topic;
     question.content = content;
     question.amount = amount;
+    question.likes = Vec::new();
 
     // Transfer 1 SOL from author to question
     let ix = anchor_lang::solana_program::system_instruction::transfer(
@@ -151,6 +152,15 @@ pub mod so_lution {
     answer.amount = 0;
     Ok(())
   }
+
+  pub fn like(ctx: Context<Like>) -> Result<()> {
+    let question: &mut Account<Question> = &mut ctx.accounts.question;
+    let fan: &Signer = &ctx.accounts.fan;
+
+    question.likes.push(*fan.key);
+
+    Ok(())
+  }
 }
 
 
@@ -162,6 +172,7 @@ pub struct Question {
   pub topic: String,
   pub content: String,
   pub amount: u64,
+  pub likes: Vec<Pubkey>
 }
 
 #[account]
@@ -243,6 +254,13 @@ pub struct RedeemReward<'info> {
   pub author: Signer<'info>
 }
 
+#[derive(Accounts)]
+pub struct Like<'info> {
+  #[account(mut)]
+  pub question: Account<'info, Question>,
+  pub fan: Signer<'info>
+}
+
 const DISCRIMINATOR_LENGTH: usize = 8;
 const PUBLIC_KEY_LENGTH: usize = 32;
 const TIMESTAMP_LENGTH: usize = 8;
@@ -251,6 +269,7 @@ const MAX_TOPIC_LENGTH: usize = 50 * 4; // 50 chars max
 const MAX_CONTENT_LENGTH: usize = 280 * 4; // 280 chars max
 const AMOUNT_LENGTH: usize = 8;
 const BOOL_LENGTH: usize = 1;
+const MAX_LIKES_LENGTH: usize = 50 * 32; // 50 likes max
 
 impl Question {
   const LEN: usize = DISCRIMINATOR_LENGTH
@@ -259,7 +278,8 @@ impl Question {
         + PUBLIC_KEY_LENGTH // Solution
         + STRING_LENGTH_PREFIX + MAX_TOPIC_LENGTH // Topic
         + STRING_LENGTH_PREFIX + MAX_CONTENT_LENGTH // Content
-        + AMOUNT_LENGTH; // Amount
+        + AMOUNT_LENGTH
+        + MAX_LIKES_LENGTH; // Amount
 }
 
 impl Answer {
