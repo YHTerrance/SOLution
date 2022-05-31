@@ -11,7 +11,7 @@ export default [
   },
   {
     name: "Rewards",
-    path: "/topics/:rewards?",
+    path: "/rewards",
     component: require("@/components/PageRewards").default,
   },
   {
