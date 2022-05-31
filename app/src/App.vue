@@ -19,7 +19,7 @@ initWorkspace();
 <template>
   <div class="w-full max-w-3xl lg:max-w-4xl mx-auto">
     <the-sidebar
-      class="py-4 md:py-8 md:pl-4 md:pr-8 fixed w-20 md:w-64"
+      class="py-4 md:py-8 md:pl-4 md:pr-8 fixed w-20 md:w-64 z-[10] md:z-auto"
     ></the-sidebar>
 
     <!-- Main -->

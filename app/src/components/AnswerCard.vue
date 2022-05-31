@@ -82,14 +82,14 @@ const onRedeem = async () => {
     <div :class="isSolution ? 'bg-pink-100 p-4 rounded-lg' : 'p-4'">
       <div
         v-if="isSolution"
-        class="flex p-2 pt-0 ml-[-8px] mb-2 justify-between items-center"
+        class="flex pl-2 pt-0 ml-[-8px] mb-2 justify-between items-center"
       >
-        <div class="underline text-pink-500 font-bold">Solution</div>
+        <div class="text-md underline text-pink-500 font-bold">Solution</div>
         <div v-if="isMyAnswer">
           <button
             v-if="answer.amount > 0"
             @click="onRedeem"
-            class="relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200"
+            class="inline-flex items-center justify-center overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200"
           >
             <span class="flex px-5 py-2.5 rounded-md text-white">
               Redeem <icon-solana class="mx-2" />
@@ -100,9 +100,9 @@ const onRedeem = async () => {
             v-else
             @click="onRedeem"
             disabled
-            class="relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200"
+            class="inline-flex items-center justify-center overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gray-400 text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200"
           >
-            <span class="flex px-5 py-2.5 rounded-md text-white">
+            <span class="flex px-3 py-2 rounded-md text-white">
               Reward claimed
             </span>
           </button>
@@ -135,13 +135,19 @@ const onRedeem = async () => {
           <button
             v-if="selectable"
             @click="onSelect"
-            class="flex relative py-[3px] px-2 rounded-full text-gray-500 hover:text-pink-500 hover:bg-gray-100"
+            class="relative flex py-[3px] px-2 rounded-full text-gray-500 hover:text-pink-500 hover:bg-gray-100"
             title="Select answer"
           >
             <icon-check></icon-check>
-            <span class="flex absolute justify-center items-center -top-2 -right-2 w-4 h-4">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-purple-500"></span>
+            <span
+              class="flex absolute justify-center items-center -top-2 -right-2 w-4 h-4"
+            >
+              <span
+                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"
+              ></span>
+              <span
+                class="relative inline-flex rounded-full h-2.5 w-2.5 bg-purple-500"
+              ></span>
             </span>
           </button>
         </div>

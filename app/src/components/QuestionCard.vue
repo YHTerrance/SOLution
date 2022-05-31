@@ -106,7 +106,10 @@ const copyQuestionUrl = (questionBase58PublicKey) => {
         <icon-solana class="mx-2"></icon-solana>
 
         {{
-          Math.max((question.amount - BASE_FEE_LAMPORTS) / LAMPORTS_PER_SOL, 0)
+          Math.max(
+            (question.amount - BASE_FEE_LAMPORTS) / LAMPORTS_PER_SOL,
+            0
+          ).toFixed(2)
         }}
       </span>
     </div>
