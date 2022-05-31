@@ -31,6 +31,7 @@ const solution = computed(() => {
         :answer="solution"
         :question="question"
         :isSolution="true"
+        :selectable="false"
       ></answer-card>
     </div>
     <div v-for="answer in orderedAnswers" :key="answer.key">
@@ -38,6 +39,7 @@ const solution = computed(() => {
         :answer="answer"
         :question="question"
         :isSolution="false"
+        :selectable="!solution"
       ></answer-card>
     </div>
   </div>
