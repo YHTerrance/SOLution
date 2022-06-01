@@ -76,7 +76,10 @@ useFromRoute((route) => {
       :has-more="hasNextPage"
       @more="getNextPage"
     ></question-list>
-    <div v-if="!loading && questions.length === 0" class="p-8 text-gray-500 text-center">
+    <div
+      v-if="!loading && questions.length === 0"
+      class="p-8 text-gray-500 text-center"
+    >
       User has not asked any questions...
     </div>
   </div>

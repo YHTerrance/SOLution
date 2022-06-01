@@ -74,14 +74,20 @@ useFromRoute((route) => {
       </template>
     </question-search>
     <div v-if="viewedTopic">
-      <question-form @added="addQuestion" :forced-topic="viewedTopic"></question-form>
+      <question-form
+        @added="addQuestion"
+        :forced-topic="viewedTopic"
+      ></question-form>
       <question-list
-        v-model:questions="questions"
+        :questions="questions"
         :loading="loading"
         :has-more="hasNextPage"
         @more="getNextPage"
       ></question-list>
-      <div v-if="!loading && questions.length === 0" class="p-8 text-gray-500 text-center">
+      <div
+        v-if="!loading && questions.length === 0"
+        class="p-8 text-gray-500 text-center"
+      >
         No questions were found in this topic...
       </div>
     </div>

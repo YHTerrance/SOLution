@@ -2,6 +2,7 @@
 import { ref, watchEffect } from "vue";
 import { fetchQuestions, fetchAnswers, targetQuestionFilter } from "@/api";
 import { useWorkspace } from "@/composables";
+import { START_TIME } from "@/const";
 import QuestionCard from "@/components/QuestionCard";
 import dayjs from "dayjs";
 
@@ -21,7 +22,10 @@ watchEffect(async () => {
   }
 
   for (const question of allQuestions.value) {
-    if (wallet.value.publicKey.toBase58() !== question.author.toBase58()) {
+    if (
+      wallet.value.publicKey.toBase58() !== question.author.toBase58() ||
+      question.timestamp <= START_TIME
+    ) {
       // not my question, skip
       continue;
     }

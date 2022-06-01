@@ -27,7 +27,7 @@ export const topicFilter = (topic) => ({
       FILTER.public_key_length + // Author public key.
       FILTER.public_key_length + // Solution public key
       FILTER.timestamp_length + // Timestamp.
-      FILTER.timestamp_length, // Topic string prefix.
+      FILTER.string_length_prefix, // Topic string prefix.
     bytes: bs58.encode(Buffer.from(topic)),
   },
 });
