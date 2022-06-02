@@ -3,6 +3,7 @@ import { computed, ref } from "vue";
 import { Question } from "@/models";
 import bs58 from "bs58";
 import { BN } from "@project-serum/anchor";
+import { FILTER, START_TIME } from "@/const";
 
 export const fetchQuestions = async (filters = []) => {
   const { program } = useWorkspace();
@@ -14,7 +15,7 @@ export const fetchQuestions = async (filters = []) => {
 
 export const authorFilter = (authorBase58PublicKey) => ({
   memcmp: {
-    offset: 8, // Discriminator.
+    offset: FILTER.discriminator_length, // Discriminator.
     bytes: authorBase58PublicKey,
   },
 });
@@ -22,11 +23,11 @@ export const authorFilter = (authorBase58PublicKey) => ({
 export const topicFilter = (topic) => ({
   memcmp: {
     offset:
-      8 + // Discriminator.
-      32 + // Author public key.
-      32 + // Solution public key
-      8 + // Timestamp.
-      4, // Topic string prefix.
+      FILTER.discriminator_length + // Discriminator.
+      FILTER.public_key_length + // Author public key.
+      FILTER.public_key_length + // Solution public key
+      FILTER.timestamp_length + // Timestamp.
+      FILTER.string_length_prefix, // Topic string prefix.
     bytes: bs58.encode(Buffer.from(topic)),
   },
 });
@@ -70,6 +71,7 @@ export const paginateQuestions = (
     console.log(allQuestionsWithTimestamps);
 
     return allQuestionsWithTimestamps
+      .filter((a) => a.timestamp > START_TIME)
       .sort((a, b) => b.timestamp.cmp(a.timestamp))
       .map(({ pubkey }) => pubkey);
   };

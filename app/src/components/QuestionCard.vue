@@ -1,7 +1,7 @@
 <script setup>
 import { toRefs, computed, ref } from "vue";
 import { useWorkspace } from "@/composables";
-import { fetchAnswers, targetQuestionFilter, deleteQuestion } from "@/api";
+import { fetchAnswers, targetQuestionFilter } from "@/api";
 import { copyUrl } from "./utils/copy.js";
 import { Status } from "@/models";
 import AnswerList from "@/components/AnswerList.vue";
@@ -43,29 +43,11 @@ const authorRoute = computed(() => {
   }
 });
 
-// Actions.
-const emit = defineEmits(["delete", "fail"]);
-
 const status = ref(new Status());
 
 // Delete function
 const ticks_delete = ref(0);
 const loading_delete = ref(false);
-
-const onDelete = async () => {
-  console.log("Deleting question");
-  loading_delete.value = true;
-  try {
-    await deleteQuestion(question.value, ticks_delete);
-    emit("delete", question.value);
-  } catch (error) {
-    console.log(error);
-    status.value.activate("danger", "Failed to delete question");
-  } finally {
-    loading_delete.value = false;
-    setTimeout(() => status.value.deactivate(), 5000);
-  }
-};
 
 // Fetch answers at start
 fetchAnswers([targetQuestionFilter(question.value.publicKey.toBase58())])
@@ -95,7 +77,6 @@ const copyQuestionUrl = (questionBase58PublicKey) => {
       :question="question"
       :authorRoute="authorRoute"
       :isMyQuestion="isMyQuestion"
-      :onDelete="onDelete"
       :loading_delete="loading_delete"
       :ticks_delete="ticks_delete"
       @edit="isEditing = true"
@@ -125,7 +106,10 @@ const copyQuestionUrl = (questionBase58PublicKey) => {
         <icon-solana class="mx-2"></icon-solana>
 
         {{
-          Math.max((question.amount - BASE_FEE_LAMPORTS) / LAMPORTS_PER_SOL, 0)
+          Math.max(
+            (question.amount - BASE_FEE_LAMPORTS) / LAMPORTS_PER_SOL,
+            0
+          ).toFixed(2)
         }}
       </span>
     </div>

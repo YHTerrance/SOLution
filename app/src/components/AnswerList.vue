@@ -22,15 +22,6 @@ const solution = computed(() => {
     .filter((a) => a.key == question.value.solution.toBase58())[0];
 });
 
-const emit = defineEmits(["update:answers", "select"]);
-
-const onDelete = async (deletedAnswer) => {
-  const filteredAnswers = answers.value.filter(
-    (answer) =>
-      answer.publicKey.toBase58() !== deletedAnswer.publicKey.toBase58()
-  );
-  emit("update:answers", filteredAnswers);
-};
 </script>
 
 <template>
@@ -40,6 +31,7 @@ const onDelete = async (deletedAnswer) => {
         :answer="solution"
         :question="question"
         :isSolution="true"
+        :selectable="false"
       ></answer-card>
     </div>
     <div v-for="answer in orderedAnswers" :key="answer.key">
@@ -47,7 +39,7 @@ const onDelete = async (deletedAnswer) => {
         :answer="answer"
         :question="question"
         :isSolution="false"
-        @delete="onDelete"
+        :selectable="!solution"
       ></answer-card>
     </div>
   </div>
