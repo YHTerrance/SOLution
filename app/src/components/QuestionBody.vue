@@ -2,10 +2,6 @@
 import { toRefs } from "vue";
 import IconEdit from "@/components/atoms/IconEdit.vue";
 import MarkdownContent from "@/components/MarkdownContent.vue";
-<<<<<<< HEAD
-=======
-
->>>>>>> 45812f6ed71f009d4fa1e4274dea71efb92e2ec8
 
 const props = defineProps({
   question: Object,
@@ -53,9 +49,7 @@ const emit = defineEmits(["edit"]);
       </div>
     </div>
 
-  <MarkdownContent
-    :text="question.content"
-  ></MarkdownContent>
+    <MarkdownContent :text="question.content"></MarkdownContent>
 
     <router-link
       v-if="question.topic"
