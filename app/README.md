@@ -9,7 +9,6 @@
 
 -   [Tailwind](https://tailwindcss.com/docs/installation)
 -   [VueJS](https://vuejs.org/)
--   [`@project-serum/anchor`](https://project-serum.github.io/anchor/ts/index.html): TypeScript client for Anchor programs
 
 ## Project setup
 
