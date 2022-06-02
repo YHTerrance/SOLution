@@ -55,22 +55,23 @@ watchEffect(async () => {
 
   loading.value = false;
 });
+
+const topTextClass = "p-8 text-gray-500 text-center border-b";
 </script>
 
 <template>
-  <div>
-    <div v-if="loading" class="p-8 text-gray-500 text-center">Loading...</div>
-    <div v-else-if="hasError" class="p-8 text-gray-500 text-center">
+  <div class="dark:text-white">
+    <div v-if="loading" :class="topTextClass">Loading...</div>
+    <div v-else-if="hasError" :class="topTextClass">
       Error on loading questions QQ
     </div>
-    <div
-      v-else-if="myQuestions.length === 0"
-      class="p-8 text-gray-500 text-center"
-    >
+    <div v-else-if="myQuestions.length === 0" :class="topTextClass">
       There is currently no rewards to claim. Go ask questions!
     </div>
-    <div v-else class="divide-y">
-      <div class="p-8 text-gray-500 text-center text-lg">
+    <div v-else>
+      <div
+        class="p-8 text-gray-500 dark:text-gray-300 text-center text-lg border-b"
+      >
         These are the claimable rewards below. Claim them as you want!
       </div>
       <question-card

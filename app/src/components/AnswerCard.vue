@@ -72,26 +72,33 @@ const onRedeem = async () => {
             {{ answer.author_display }}
           </router-link>
         </h3>
-        <span class="text-gray-500"> • </span>
-        <time class="text-gray-500 text-sm" :title="answer.created_at">
+        <span class="text-gray-500 dark:text-gray-100"> • </span>
+        <time
+          class="text-gray-500 dark:text-gray-100 text-sm"
+          :title="answer.created_at"
+        >
           {{ answer.created_ago }}
         </time>
       </div>
     </answer-modal-update>
 
-    <div :class="isSolution ? 'bg-pink-100 p-4 rounded-lg' : 'p-4'">
+    <div
+      :class="
+        isSolution ? 'bg-pink-100 dark:bg-pink-100/10 p-4 rounded-lg' : 'p-4'
+      "
+    >
       <div
         v-if="isSolution"
         class="flex pl-2 pt-0 ml-[-8px] mb-2 justify-between items-center"
       >
-        <div class="text-md underline text-pink-500 font-bold">Solution</div>
+        <div class="text-md underline text-pink-700 font-bold">Solution</div>
         <div v-if="isMyAnswer">
           <button
             v-if="answer.amount > 0"
             @click="onRedeem"
-            class="inline-flex items-center justify-center overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200"
+            class="inline-flex items-center justify-center overflow-hidden text-md font-semibold text-white rounded group bg-gradient-to-br from-pink-500 to-orange-400 focus:ring-4 focus:outline-none focus:ring-pink-200"
           >
-            <span class="flex px-5 py-2.5 rounded-md text-white">
+            <span class="flex px-2.5 py-1 rounded text-md">
               Redeem <icon-solana class="mx-2" />
               {{ answer.amount / LAMPORTS_PER_SOL }}
             </span>
@@ -111,13 +118,19 @@ const onRedeem = async () => {
 
       <div class="flex justify-between pb-2">
         <div>
-          <h3 class="inline font-semibold" :title="answer.author">
+          <h3
+            class="inline font-semibold dark:text-white"
+            :title="answer.author"
+          >
             <router-link :to="authorRoute" class="hover:underline">
               {{ answer.author_display }}
             </router-link>
           </h3>
-          <span class="text-gray-500"> • </span>
-          <time class="text-gray-500 text-sm" :title="answer.created_at">
+          <span class="text-gray-500 dark:text-gray-100"> • </span>
+          <time
+            class="text-gray-500 dark:text-gray-100 text-sm"
+            :title="answer.created_at"
+          >
             {{ answer.created_ago }}
           </time>
         </div>
@@ -126,7 +139,7 @@ const onRedeem = async () => {
           <div class="flex" v-if="isMyAnswer">
             <button
               @click="isEditing = true"
-              class="flex px-2 rounded-full text-gray-500 hover:text-pink-500 hover:bg-gray-100"
+              class="w-6 h-6 flex rounded-full text-gray-500 dark:text-gray-300 hover:text-pink-500 dark:hover:text-midnight hover:bg-gray-100 dark:hover:bg-pink-200"
               title="Update answer"
             >
               <icon-edit></icon-edit>
@@ -135,12 +148,12 @@ const onRedeem = async () => {
           <button
             v-if="selectable"
             @click="onSelect"
-            class="relative flex py-[3px] px-2 rounded-full text-gray-500 hover:text-pink-500 hover:bg-gray-100"
+            class="relative flex w-6 h-6 rounded-full text-gray-500 hover:text-pink-500 hover:bg-gray-100 dark:hover:bg-pink-100 dark:hover:text-midnight"
             title="Select answer"
           >
             <icon-check></icon-check>
             <span
-              class="flex absolute justify-center items-center -top-2 -right-2 w-4 h-4"
+              class="flex absolute justify-center items-center -top-[7px] -right-[9px] w-4 h-4"
             >
               <span
                 class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"
@@ -152,7 +165,10 @@ const onRedeem = async () => {
           </button>
         </div>
       </div>
-      <MarkdownContent :text="answer.content"></MarkdownContent>
+      <MarkdownContent
+        :text="answer.content"
+        class="dark:text-white"
+      ></MarkdownContent>
     </div>
   </div>
 </template>
