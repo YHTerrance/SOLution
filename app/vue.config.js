@@ -8,7 +8,6 @@ module.exports = defineConfig({
       new webpack.ProvidePlugin({
         Buffer: ["buffer", "Buffer"],
       }),
-      "jsx",
     ],
     resolve: {
       fallback: {
