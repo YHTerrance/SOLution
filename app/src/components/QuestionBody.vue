@@ -20,13 +20,19 @@ const emit = defineEmits(["edit"]);
   <div>
     <div class="flex justify-between pb-2">
       <div>
-        <h3 class="inline font-semibold" :title="question.author">
+        <h3
+          class="inline font-semibold dark:text-white"
+          :title="question.author"
+        >
           <router-link :to="authorRoute" class="hover:underline">
             {{ question.author_display }}
           </router-link>
         </h3>
-        <span class="text-gray-500"> • </span>
-        <time class="text-gray-500 text-sm" :title="question.created_at">
+        <span class="text-gray-500 dark:text-gray-300"> • </span>
+        <time
+          class="text-gray-500 dark:text-gray-300 text-sm"
+          :title="question.created_at"
+        >
           <router-link
             :to="{
               name: 'Question',
@@ -41,7 +47,7 @@ const emit = defineEmits(["edit"]);
       <div class="flex" v-if="isMyQuestion">
         <button
           @click="emit('edit')"
-          class="flex px-2 rounded-full text-gray-500 hover:text-pink-500 hover:bg-gray-100"
+          class="flex w-6 h-6 rounded-full text-gray-500 dark:text-gray-300 hover:text-pink-500 dark:hover:text-midnight hover:bg-gray-100 dark:hover:bg-pink-200"
           title="Update question"
         >
           <icon-edit></icon-edit>
@@ -49,12 +55,15 @@ const emit = defineEmits(["edit"]);
       </div>
     </div>
 
-    <MarkdownContent :text="question.content"></MarkdownContent>
+    <MarkdownContent
+      :text="question.content"
+      class="dark:text-white"
+    ></MarkdownContent>
 
     <router-link
       v-if="question.topic"
       :to="{ name: 'Topics', params: { topic: question.topic } }"
-      class="inline-block mt-2 text-pink-500 hover:underline justify-self-start"
+      class="inline-block mt-2 text-pink-700 font-bold hover:underline justify-self-start"
     >
       #{{ question.topic }}
     </router-link>

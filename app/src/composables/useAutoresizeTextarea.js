@@ -7,8 +7,6 @@ export const useAutoresizeTextarea = (element) => {
       element.value.scrollHeight < 50
         ? element.value.scrollHeight + "px"
         : element.value.scrollHeight + 12 + "px";
-
-    console.log(element.value.style.height);
   };
 
   watchEffect((onInvalidate) => {

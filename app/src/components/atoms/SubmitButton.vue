@@ -22,7 +22,11 @@ const emit = defineEmits(["click"]);
     v-if="!loading"
     class="text-white px-4 py-2 rounded-full font-semibold"
     :disabled="!enabled"
-    :class="enabled ? 'bg-pink-500' : 'bg-pink-300 cursor-not-allowed'"
+    :class="
+      enabled
+        ? 'bg-pink-500 dark:bg-pink-700'
+        : 'bg-gray-400 cursor-not-allowed'
+    "
     @click="emit('click')"
   >
     <slot> Ask </slot>
