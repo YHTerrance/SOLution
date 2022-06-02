@@ -84,18 +84,20 @@ const submit = async () => {
       ></div>
 
       <div
-        class="bg-white w-11/12 md:max-w-md mx-auto rounded-lg shadow-lg overflow-y-auto z-100"
+        class="dark:bg-midnight bg-white w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg overflow-y-auto z-100"
       >
         <div class="py-4 text-left px-6">
           <div class="flex-col pb-3">
-            <h1 class="text-xl font-bold mt-2 mb-4">Answering...</h1>
+            <h1 class="text-xl dark:text-white font-bold mt-2 mb-4">
+              Answering...
+            </h1>
             <slot>Loading slot</slot>
-            <div v-if="connected" class="py-4 border-b">
+            <div v-if="connected" class="pt-4">
               <!-- Content field. -->
               <textarea
                 ref="textarea"
                 rows="1"
-                class="text-xl p-0 w-full focus:outline-none resize-none mb-3 border-none focus:ring-transparent"
+                class="md:text-xl text-md grow focus:outline-none resize-none overflow-clip mb-3 px-1 focus:border-pink-600 focus:ring-transparent border-gray-200 border-0 border-b-2 bg-transparent dark:text-white w-full"
                 placeholder="What's your solution?"
                 v-model="content"
               ></textarea>

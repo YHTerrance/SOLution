@@ -22,7 +22,7 @@ const { forcedTopic } = toRefs(props);
 // Form data.
 const content = ref("");
 const topic = ref("");
-const amount = ref();
+const amount = ref(0);
 const deposit = BASE_FEE_LAMPORTS / LAMPORTS_PER_SOL;
 const slugTopic = useSlug(topic);
 const effectiveTopic = computed(() => forcedTopic.value ?? slugTopic.value);
@@ -41,7 +41,9 @@ const characterLimitColour = computed(() => {
 
 // Permissions.
 const { connected } = useWallet();
-const canQuestion = computed(() => content.value && characterLimit.value > 0);
+const canQuestion = computed(
+  () => content.value !== "" && characterLimit.value > 0 && amount.value > 0.001
+);
 
 // Actions.
 const loading = ref(false);
@@ -86,13 +88,13 @@ const ask = async () => {
 </script>
 
 <template>
-  <div v-if="connected" class="px-8 py-4 border-b">
+  <div v-if="connected" class="px-8 py-4 border-b dark:border-pink-200">
     <!-- Content field. -->
     <div class="w-full flex">
       <textarea
         ref="textarea"
         rows="1"
-        class="md:text-xl text-md grow focus:outline-none resize-none overflow-clip mb-3 px-3 focus:border-pink-600 focus:ring-transparent border-gray-200 border-0 border-b-2"
+        class="md:text-xl text-md grow focus:outline-none resize-none overflow-clip mb-3 px-1 focus:border-pink-600 focus:ring-transparent border-gray-200 border-0 border-b-2 bg-transparent dark:text-white"
         placeholder="What's happening?"
         v-model="content"
       ></textarea>
@@ -103,11 +105,11 @@ const ask = async () => {
 
     <div class="flex flex-wrap items-center justify-between -m-2">
       <!-- Topic field. -->
-      <div class="relative m-2 mr-4">
+      <div class="relative m-2 mr-4 mt-4">
         <input
           type="text"
           placeholder="topic"
-          class="text-pink-500 rounded-full pl-10 pr-4 py-2 bg-gray-100 border-none focus:ring-pink-500/50"
+          class="text-pink-500 dark:text-midnight font-bold rounded-full pl-10 pr-4 py-2 bg-gray-100 border-none focus:ring-pink-500/50"
           :value="effectiveTopic"
           :disabled="forcedTopic"
           @input="topic = $event.target.value"
@@ -116,7 +118,11 @@ const ask = async () => {
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-5 w-5 m-auto"
-            :class="effectiveTopic ? 'text-pink-500' : 'text-gray-400'"
+            :class="
+              effectiveTopic
+                ? 'text-pink-500 dark:text-midnight'
+                : 'text-gray-400'
+            "
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -133,48 +139,48 @@ const ask = async () => {
       </div>
 
       <!-- question button. -->
-      <div class="relative z-0 w-full my-6 group">
+      <div class="relative z-0 w-full my-6 mt-10 group dark:text-white">
         <div class="inline-block w-4/12 p-2">
           <label
             for="charge"
-            class="peer-focus:font-medium absolute text-sm text-pink-500 dark:text-pink-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-pink-600 peer-focus:dark:text-pink-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            class="md:text-lg peer-focus:font-medium absolute text-sm text-pink-500 dark:text-pink-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-pink-600 peer-focus:dark:text-pink-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
           >
-            Reward (required)</label
+            Reward (required > 0.001)</label
           >
           <input
             v-model="amount"
             type="number"
             name="charge"
             id="charge"
-            placeholder=" "
-            class="block py-2.5 px-0 w-full text-sm text-pink-900 bg-transparent border-0 border-b-2 border-pink-300 appearance-none dark:text-white dark:border-pink-600 dark:focus:border-pink-500 focus:outline-none focus:ring-0 focus:border-pink-600 peer"
+            placeholder=""
+            class="md:text-lg block py-2.5 px-0 w-full text-sm text-pink-900 bg-transparent border-0 border-b-2 border-pink-300 appearance-none dark:text-white dark:border-pink-600 dark:focus:border-pink-500 focus:outline-none focus:ring-0 focus:border-pink-600 peer"
             required
           />
         </div>
         <span class="inline-block w-1/12 text-center text-lg">+</span>
         <div class="inline-block w-3/12 p-2">
           <label
-            class="peer-focus:font-medium absolute text-sm text-pink-500 dark:text-pink-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-pink-600 peer-focus:dark:text-pink-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            class="md:text-lg peer-focus:font-medium absolute text-sm text-pink-500 dark:text-pink-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-pink-600 peer-focus:dark:text-pink-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
           >
             Deposit (fixed)</label
           >
           <span
-            class="block py-2.5 px-0 w-full text-sm text-pink-900 bg-transparent border-0 border-b-2 border-pink-300 appearance-none dark:text-white dark:border-pink-600 dark:focus:border-pink-500 focus:outline-none focus:ring-0 focus:border-pink-600 peer"
+            class="md:text-lg block py-2.5 px-0 w-full text-sm text-pink-900 bg-transparent appearance-none dark:text-white peer"
           >
             {{ deposit }}
           </span>
         </div>
-        <span class="inline-block w-1/12 text-center text-lg">=</span>
+        <span class="inline-block w-1/12 text-center text-lg">≈</span>
         <div class="inline-block w-3/12 p-2">
           <label
-            class="peer-focus:font-medium absolute text-sm text-pink-500 dark:text-pink-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-pink-600 peer-focus:dark:text-pink-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            class="md:text-lg peer-focus:font-medium absolute text-sm text-pink-500 dark:text-pink-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-pink-600 peer-focus:dark:text-pink-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
           >
             Total</label
           >
           <span
-            class="block py-2.5 px-0 w-full text-sm text-pink-900 bg-transparent border-0 border-b-2 border-pink-300 appearance-none dark:text-white dark:border-pink-600 dark:focus:border-pink-500 focus:outline-none focus:ring-0 focus:border-pink-600 peer"
+            class="block py-2.5 px-0 w-full text-sm md:text-lg text-pink-900 bg-transparent appearance-none dark:text-white peer"
           >
-            {{ (amount ?? 0) + deposit }}
+            {{ Number((amount ?? 0) + deposit).toFixed(3) }}
           </span>
         </div>
       </div>
@@ -193,7 +199,10 @@ const ask = async () => {
     <toast-item :status="status"></toast-item>
   </div>
 
-  <div v-else class="px-8 py-4 bg-pink-50 text-gray-500 text-center border-b">
+  <div
+    v-else
+    class="px-8 py-4 bg-pink-50 dark:text-white text-gray-500 text-center border-b"
+  >
     Connect your wallet to start asking questions...
   </div>
 </template>

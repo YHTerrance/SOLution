@@ -1,6 +1,10 @@
 <script setup>
 import { computed, ref, toRefs } from "vue";
-import { useAutoresizeTextarea, useCountCharacterLimit, useSlug } from "@/composables";
+import {
+  useAutoresizeTextarea,
+  useCountCharacterLimit,
+  useSlug,
+} from "@/composables";
 import { updateQuestion } from "@/api";
 import { useWallet } from "solana-wallets-vue";
 // Props.
@@ -24,7 +28,9 @@ const characterLimitColour = computed(() => {
 });
 // Permissions.
 const { connected } = useWallet();
-const canAskQuestion = computed(() => content.value && characterLimit.value > 0);
+const canAskQuestion = computed(
+  () => content.value && characterLimit.value > 0
+);
 // Actions.
 const emit = defineEmits(["close"]);
 const update = async () => {
@@ -37,14 +43,17 @@ const update = async () => {
 <template>
   <div v-if="connected">
     <div class="px-8 py-4 border-l-4 border-pink-500">
-      <div class="py-1">
+      <div class="py-1 dark:text-white">
         <h3 class="inline font-semibold" :title="question.author">
           <router-link :to="{ name: 'Profile' }" class="hover:underline">
             {{ question.author_display }}
           </router-link>
         </h3>
-        <span class="text-gray-500"> • </span>
-        <time class="text-gray-500 text-sm" :title="question.created_at">
+        <span class="text-gray-500 dark:text-white"> • </span>
+        <time
+          class="text-gray-500 text-sm dark:text-white"
+          :title="question.created_at"
+        >
           <router-link
             :to="{
               name: 'Question',
@@ -61,7 +70,7 @@ const update = async () => {
       <textarea
         ref="textarea"
         rows="1"
-        class="my-2 text-xl w-full focus:outline-none resize-none mb-3 border-none focus:ring-pink-500 rounded-xl"
+        class="my-2 text-xl w-full focus:outline-none resize-none mb-3 border-none focus:ring-pink-300 rounded-xl bg-gray-700 dark:text-white"
         placeholder="What's happening?"
         v-model="content"
       ></textarea>
@@ -72,7 +81,7 @@ const update = async () => {
           <input
             type="text"
             placeholder="topic"
-            class="text-pink-500 rounded-full pl-10 pr-4 py-2 bg-gray-100 border-none focus:ring-pink-500"
+            class="text-pink-500 dark:text-midnight font-bold rounded-full pl-10 pr-4 py-2 bg-gray-100 dark:bg-gray-300 border-none focus:ring-pink-500"
             :value="slugTopic"
             @input="topic = $event.target.value"
           />
@@ -80,7 +89,9 @@ const update = async () => {
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="h-5 w-5 m-auto"
-              :class="slugTopic ? 'text-pink-500' : 'text-gray-400'"
+              :class="
+                slugTopic ? 'text-pink-500 dark:text-midnight' : 'text-gray-400'
+              "
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -98,7 +109,7 @@ const update = async () => {
 
           <!-- Close button. -->
           <button
-            class="text-gray-500 px-4 py-2 rounded-full border bg-white hover:bg-gray-50"
+            class="text-gray-500 px-4 py-2 rounded-full border bg-white hover:bg-gray-100"
             @click="emit('close')"
           >
             Cancel
@@ -108,7 +119,9 @@ const update = async () => {
           <button
             class="text-white px-4 py-2 rounded-full font-semibold"
             :disabled="!canAskQuestion"
-            :class="canAskQuestion ? 'bg-pink-500' : 'bg-pink-300 cursor-not-allowed'"
+            :class="
+              canAskQuestion ? 'bg-pink-700' : 'bg-pink-300 cursor-not-allowed'
+            "
             @click="update"
           >
             Update

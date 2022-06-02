@@ -7,6 +7,11 @@ import IconUsers from "@/components/atoms/IconUsers";
 import IconProfile from "@/components/atoms/IconProfile";
 import IconLogo from "@/components/atoms/IconLogo.vue";
 const { connected } = useWallet();
+
+const routeLinkClass =
+  "group rounded-full hover:font-bold hover:bg-gray-100 dark:hover:bg-pink-300 dark:text-white dark:hover:text-midnight p-3 md:w-full inline-flex items-center space-x-4";
+const iconClass =
+  "h-8 w-8 text-gray-700 dark:text-white dark:group-hover:text-midnight";
 </script>
 
 <template>
@@ -15,75 +20,60 @@ const { connected } = useWallet();
   >
     <router-link
       :to="{ name: 'Home' }"
-      class="inline-block rounded-full hover:bg-gray-100 p-3 md:self-start"
+      class="inline-block rounded-full p-3 md:self-start"
     >
-      <icon-logo class="text-pink-500 h-8 md:h-[150px] w-8 md:w-[150px]" />
+      <icon-logo class="text-pink-700 h-8 md:h-[150px] w-8 md:w-[150px]" />
     </router-link>
     <div class="flex flex-col items-center md:items-stretch space-y-2">
       <router-link
         :to="{ name: 'Home' }"
-        class="rounded-full hover:bg-gray-100 p-3 md:w-full inline-flex items-center space-x-4"
+        :class="routeLinkClass"
         active-class="font-bold"
         v-slot="{ isActive }"
       >
-        <icon-home
-          class="h-8 w-8 text-gray-700"
-          v-bind:isActive="isActive"
-        ></icon-home>
+        <icon-home :class="iconClass" :isActive="isActive"></icon-home>
         <div class="text-xl hidden md:block">Home</div>
       </router-link>
       <router-link
         :to="{ name: 'Topics' }"
-        class="rounded-full hover:bg-gray-100 p-3 md:w-full inline-flex items-center space-x-4"
+        :class="routeLinkClass"
         active-class="font-bold"
         v-slot="{ isActive }"
       >
-        <icon-topic
-          class="h-8 w-8 text-gray-700"
-          v-bind:isActive="isActive"
-        ></icon-topic>
+        <icon-topic :class="iconClass" :isActive="isActive"></icon-topic>
         <div class="text-xl hidden md:block">Topics</div>
       </router-link>
       <router-link
         :to="{ name: 'Rewards' }"
-        class="rounded-full hover:bg-gray-100 p-3 md:w-full inline-flex items-center space-x-4"
+        :class="routeLinkClass"
         active-class="font-bold"
         v-slot="{ isActive }"
       >
-        <icon-gift
-          class="h-8 w-8 text-gray-700"
-          v-bind:isActive="isActive"
-        ></icon-gift>
+        <icon-gift :class="iconClass" :isActive="isActive"></icon-gift>
         <div class="text-xl hidden md:block">Rewards</div>
       </router-link>
       <router-link
         :to="{ name: 'Users' }"
-        class="rounded-full hover:bg-gray-100 p-3 md:w-full inline-flex items-center space-x-4"
+        :class="routeLinkClass"
         active-class="font-bold"
         v-slot="{ isActive }"
       >
-        <icon-users
-          class="h-8 w-8 text-gray-700"
-          v-bind:isActive="isActive"
-        ></icon-users>
+        <icon-users :class="iconClass" :isActive="isActive"></icon-users>
         <div class="text-xl hidden md:block">Users</div>
       </router-link>
       <!-- TODO: Check connected wallet. -->
       <router-link
         v-if="connected"
         :to="{ name: 'Profile' }"
-        class="rounded-full hover:bg-gray-100 p-3 md:w-full inline-flex items-center space-x-4"
+        :class="routeLinkClass"
         active-class="font-bold"
         v-slot="{ isActive }"
       >
-        <icon-profile
-          class="h-8 w-8 text-gray-700"
-          v-bind:isActive="isActive"
-        ></icon-profile>
+        <icon-profile :class="iconClass" :isActive="isActive"></icon-profile>
         <div class="text-xl hidden md:block">Profile</div>
       </router-link>
     </div>
-    <div class="fixed bottom-8 right-8 md:static w-48 md:w-full">
+    <div class="fixed bottom-8 right-8 md:static w-48 md:w-full md:pt-6">
       <wallet-multi-button></wallet-multi-button>
     </div>
   </aside>
