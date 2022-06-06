@@ -3,6 +3,7 @@ import { ref, watchEffect } from "vue";
 import { fetchQuestions, fetchAnswers, targetQuestionFilter } from "@/api";
 import { useWorkspace } from "@/composables";
 import { START_TIME } from "@/const";
+import { useWallet } from "solana-wallets-vue";
 import QuestionCard from "@/components/QuestionCard";
 import dayjs from "dayjs";
 
@@ -11,6 +12,7 @@ const loading = ref(false);
 const hasError = ref(false);
 const allQuestions = ref([]);
 const myQuestions = ref([]);
+const { connected } = useWallet();
 
 watchEffect(async () => {
   try {
@@ -56,12 +58,16 @@ watchEffect(async () => {
   loading.value = false;
 });
 
-const topTextClass = "p-8 text-gray-500 text-center border-b";
+const topTextClass =
+  "p-8 text-gray-500 dark:text-white bg-pink-100/10 text-center border-b";
 </script>
 
 <template>
   <div class="dark:text-white">
-    <div v-if="loading" :class="topTextClass">Loading...</div>
+    <div v-if="!connected" :class="topTextClass">
+      Connect your wallet to see your rewards
+    </div>
+    <div v-else-if="loading" :class="topTextClass">Loading...</div>
     <div v-else-if="hasError" :class="topTextClass">
       Error on loading questions QQ
     </div>
@@ -69,9 +75,7 @@ const topTextClass = "p-8 text-gray-500 text-center border-b";
       There is currently no rewards to claim. Go ask questions!
     </div>
     <div v-else>
-      <div
-        class="p-8 text-gray-500 dark:text-gray-300 text-center text-lg border-b"
-      >
+      <div :class="topTextClass">
         These are the claimable rewards below. Claim them as you want!
       </div>
       <question-card
