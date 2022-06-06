@@ -9,9 +9,9 @@ import IconLogo from "@/components/atoms/IconLogo.vue";
 const { connected } = useWallet();
 
 const routeLinkClass =
-  "group rounded-full hover:font-bold hover:bg-gray-100 dark:hover:bg-pink-300 dark:text-white dark:hover:text-midnight p-3 md:w-full inline-flex items-center space-x-4";
+  "group rounded-full hover:font-bold hover:bg-gray-100 dark:hover:bg-pink-300 dark:text-white dark:hover:text-midnight-900 p-3 md:w-full inline-flex items-center space-x-4";
 const iconClass =
-  "h-8 w-8 text-gray-700 dark:text-white dark:group-hover:text-midnight";
+  "h-8 w-8 text-gray-700 dark:text-white dark:group-hover:text-midnight-900";
 </script>
 
 <template>

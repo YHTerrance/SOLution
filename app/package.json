@@ -25,6 +25,7 @@
 		"flowbite": "^1.4.1",
 		"markdown-it-latex": "^0.2.0",
 		"mathjax-vue3": "^1.0.1",
+		"pinia": "^2.0.14",
 		"postcss": "^8.4.13",
 		"prettier": "^2.6.2",
 		"solana-wallets-vue": "^0.3.2",

@@ -8,16 +8,18 @@ import {
 import SubmitButton from "@/components/atoms/SubmitButton.vue";
 import { askQuestion } from "@/api";
 import { useWallet } from "solana-wallets-vue";
-import ToastItem from "@/components/atoms/ToastItem.vue";
-import { Status } from "@/models";
 import { BASE_FEE_LAMPORTS } from "@/const";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { useStatus } from "@/stores";
 
 // Props.
 const props = defineProps({
   forcedTopic: String,
 });
 const { forcedTopic } = toRefs(props);
+
+// State
+const status = useStatus();
 
 // Form data.
 const content = ref("");
@@ -49,7 +51,6 @@ const canQuestion = computed(
 const loading = ref(false);
 const emit = defineEmits(["added", "failed"]);
 const ticks = ref(0);
-const status = ref(new Status());
 
 const ask = async () => {
   if (!canQuestion.value) return;
@@ -68,21 +69,20 @@ const ask = async () => {
       amount.value + deposit,
       ticks
     );
-    status.value.activate("success", "Successfully asked question");
     topic.value = "";
     content.value = "";
     amount.value = undefined;
     emit("added", question);
+    status.addSuccessStatus("Successfully added question.");
   } catch (error) {
     console.log(error);
-    status.value.activate("danger", "Failed to ask question");
     topic.value = storedValue.eff;
     content.value = storedValue.con;
     amount.value = storedValue.amo;
+    status.addErrorStatus("Failed to ask question.");
     emit("failed", question);
   } finally {
     loading.value = false;
-    setTimeout(() => status.value.deactivate(), 5000);
   }
 };
 </script>
@@ -109,7 +109,7 @@ const ask = async () => {
         <input
           type="text"
           placeholder="topic"
-          class="text-pink-500 dark:text-midnight font-bold rounded-full pl-10 pr-4 py-2 bg-gray-100 border-none focus:ring-pink-500/50"
+          class="text-pink-500 dark:text-midnight-900 font-bold rounded-full pl-10 pr-4 py-2 bg-gray-100 border-none focus:ring-pink-500/50"
           :value="effectiveTopic"
           :disabled="forcedTopic"
           @input="topic = $event.target.value"
@@ -120,7 +120,7 @@ const ask = async () => {
             class="h-5 w-5 m-auto"
             :class="
               effectiveTopic
-                ? 'text-pink-500 dark:text-midnight'
+                ? 'text-pink-500 dark:text-midnight-900'
                 : 'text-gray-400'
             "
             viewBox="0 0 20 20"
@@ -195,8 +195,6 @@ const ask = async () => {
         </submit-button>
       </div>
     </div>
-
-    <toast-item :status="status"></toast-item>
   </div>
 
   <div

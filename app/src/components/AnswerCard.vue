@@ -9,6 +9,7 @@ import { useWorkspace } from "@/composables";
 import { BASE_FEE_LAMPORTS } from "@/const";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import MarkdownContent from "@/components/MarkdownContent.vue";
+import { useStatus } from "@/stores";
 
 const props = defineProps({
   question: Object,
@@ -18,6 +19,7 @@ const props = defineProps({
 });
 const { wallet } = useWorkspace();
 const { question, answer, isSolution } = toRefs(props);
+const status = useStatus();
 
 const isEditing = ref(false);
 
@@ -44,7 +46,11 @@ const onSelect = async () => {
     question.value.solution = answer.value.publicKey;
     answer.value.amount += question.value.amount - BASE_FEE_LAMPORTS;
     question.value.amount = 0;
+    status.addSuccessStatus(
+      `Successfully selected solution and retrieved ${BASE_FEE_LAMPORTS} SOL`
+    );
   } catch (error) {
+    status.addErrorStatus("Failed to select solution");
     console.log(error);
   }
 };
@@ -53,8 +59,12 @@ const onRedeem = async () => {
   try {
     await redeemReward(answer.value);
     answer.value.amount = 0;
+    status.addSuccessStatus(
+      `Successfully redeemed reward: ${answer.value} SOL.`
+    );
   } catch (error) {
     console.log(error);
+    status.addErrorStatus("Failed to redeem rewards.");
   }
 };
 </script>
@@ -139,7 +149,7 @@ const onRedeem = async () => {
           <div class="flex" v-if="isMyAnswer">
             <button
               @click="isEditing = true"
-              class="w-6 h-6 flex rounded-full text-gray-500 dark:text-gray-300 hover:text-pink-500 dark:hover:text-midnight hover:bg-gray-100 dark:hover:bg-pink-200"
+              class="w-6 h-6 flex rounded-full text-gray-500 dark:text-gray-300 hover:text-pink-500 dark:hover:text-midnight-900 hover:bg-gray-100 dark:hover:bg-pink-200"
               title="Update answer"
             >
               <icon-edit></icon-edit>
@@ -148,7 +158,7 @@ const onRedeem = async () => {
           <button
             v-if="selectable"
             @click="onSelect"
-            class="relative flex w-6 h-6 rounded-full text-gray-500 hover:text-pink-500 hover:bg-gray-100 dark:hover:bg-pink-100 dark:hover:text-midnight"
+            class="relative flex w-6 h-6 rounded-full text-gray-500 hover:text-pink-500 hover:bg-gray-100 dark:hover:bg-pink-100 dark:hover:text-midnight-900"
             title="Select answer"
           >
             <icon-check></icon-check>

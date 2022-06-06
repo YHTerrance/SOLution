@@ -18,8 +18,11 @@ const router = createRouter({
   routes,
 });
 
+// Global stores
+import { createPinia } from "pinia";
+
 // Create the app
 import { createApp } from "vue";
 import App from "./App.vue";
 
-createApp(App).use(router).mount("#app");
+createApp(App).use(createPinia()).use(router).mount("#app");

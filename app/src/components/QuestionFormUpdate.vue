@@ -81,7 +81,7 @@ const update = async () => {
           <input
             type="text"
             placeholder="topic"
-            class="text-pink-500 dark:text-midnight font-bold rounded-full pl-10 pr-4 py-2 bg-gray-100 dark:bg-gray-300 border-none focus:ring-pink-500"
+            class="text-pink-500 dark:text-midnight-900 font-bold rounded-full pl-10 pr-4 py-2 bg-gray-100 dark:bg-gray-300 border-none focus:ring-pink-500"
             :value="slugTopic"
             @input="topic = $event.target.value"
           />
@@ -90,7 +90,9 @@ const update = async () => {
               xmlns="http://www.w3.org/2000/svg"
               class="h-5 w-5 m-auto"
               :class="
-                slugTopic ? 'text-pink-500 dark:text-midnight' : 'text-gray-400'
+                slugTopic
+                  ? 'text-pink-500 dark:text-midnight-900'
+                  : 'text-gray-400'
               "
               viewBox="0 0 20 20"
               fill="currentColor"
