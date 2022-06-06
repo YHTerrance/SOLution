@@ -201,7 +201,7 @@ const ask = async () => {
 
   <div
     v-else
-    class="px-8 py-4 bg-pink-50 dark:text-white text-gray-500 text-center border-b"
+    class="px-8 py-4 bg-pink-200/10 dark:text-white text-gray-500 text-center border-b"
   >
     Connect your wallet to start asking questions...
   </div>
