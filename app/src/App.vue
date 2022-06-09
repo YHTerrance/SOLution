@@ -7,8 +7,11 @@ import {
 } from "@solana/wallet-adapter-wallets";
 import { initWallet } from "solana-wallets-vue";
 import { initWorkspace } from "./composables";
+import { useStatus } from "@/stores";
+import ToastItem from "./components/atoms/ToastItem.vue";
 
 const route = useRoute();
+const status = useStatus();
 
 const wallets = [new PhantomWalletAdapter(), new SolflareWalletAdapter()];
 
@@ -18,6 +21,7 @@ initWorkspace();
 
 <template>
   <div class="w-full max-w-3xl lg:max-w-4xl mx-auto">
+    <!-- sidebar -->
     <the-sidebar
       class="py-4 md:py-8 md:pl-4 md:pr-8 fixed w-20 md:w-64 z-[10] md:z-auto"
     ></the-sidebar>
@@ -64,5 +68,11 @@ initWorkspace();
       </header>
       <router-view></router-view>
     </main>
+    <div v-for="_status in status.statuses" :key="_status.timestamp">
+      <toast-item
+        :status="_status"
+        @delete="status.deleteStatus(_status.timestamp)"
+      ></toast-item>
+    </div>
   </div>
 </template>

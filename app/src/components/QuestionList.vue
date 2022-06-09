@@ -1,8 +1,6 @@
 <script setup>
-import { computed, toRefs, ref } from "vue";
+import { computed, toRefs } from "vue";
 import QuestionCard from "@/components/QuestionCard";
-import ToastItem from "@/components/atoms/ToastItem.vue";
-import { Status } from "@/models";
 
 const props = defineProps({
   questions: Array,
@@ -10,7 +8,6 @@ const props = defineProps({
   hasMore: Boolean,
 });
 const { questions, loading, hasMore } = toRefs(props);
-const status = ref(new Status());
 
 // Actions
 const emit = defineEmits(["update:questions", "more"]);
@@ -31,12 +28,11 @@ const orderedQuestions = computed(() => {
     <div v-else-if="hasMore" class="p-8 text-center">
       <button
         @click="emit('more')"
-        class="px-4 py-2 rounded-full border bg-gray-50 dark:bg-pink-100/10 hover:bg-gray-100 dark:hover:bg-pink-100 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-midnight"
+        class="px-4 py-2 rounded-full border bg-gray-50 dark:bg-pink-100/10 hover:bg-gray-100 dark:hover:bg-pink-100 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-midnight-900"
       >
         Load More
       </button>
     </div>
     <div v-else class="divide-y"></div>
-    <toast-item :status="status"></toast-item>
   </div>
 </template>

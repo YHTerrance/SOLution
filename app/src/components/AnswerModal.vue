@@ -2,10 +2,9 @@
 import { toRefs, ref, computed } from "vue";
 import { useAutoresizeTextarea, useCountCharacterLimit } from "@/composables";
 import SubmitButton from "@/components/atoms/SubmitButton.vue";
-import ToastItem from "@/components/atoms/ToastItem.vue";
 import { useWallet } from "solana-wallets-vue";
 import { submitAnswer } from "@/api";
-import { Status } from "@/models";
+import { useStatus } from "@/stores";
 
 function close_modal() {
   if (!loading.value) emit("close");
@@ -16,6 +15,9 @@ const props = defineProps({
 });
 
 const { show, targetQuestion } = toRefs(props);
+
+// state
+const status = useStatus();
 
 // Form data.
 const content = ref("");
@@ -41,9 +43,6 @@ const loading = ref(false);
 const emit = defineEmits(["added", "failed", "close"]);
 const ticks = ref(0); // Record the ticks passed during transaction confirmation
 
-// Toast
-const status = ref(new Status());
-
 const submit = async () => {
   if (!canSubmit.value) return;
   loading.value = true;
@@ -55,18 +54,17 @@ const submit = async () => {
       content.value,
       ticks
     );
-    status.value.activate("success", "Successfully answered question!");
+    status.addSuccessStatus("Successfully submitted answer.");
     emit("added", answer);
   } catch (error) {
     console.log(error);
-    status.value.activate("danger", "Failed to answer");
+    status.addErrorStatus("Failed to submit answer.");
     emit("failed", answer);
   } finally {
     loading.value = false;
     content.value = "";
     console.log(ticks.value);
     ticks.value = 0;
-    setTimeout(() => status.value.deactivate(), 5000);
     close_modal();
   }
 };
@@ -84,7 +82,7 @@ const submit = async () => {
       ></div>
 
       <div
-        class="dark:bg-midnight bg-white w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg overflow-y-auto z-100"
+        class="dark:bg-midnight-900 bg-white w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg overflow-y-auto z-100"
       >
         <div class="py-4 text-left px-6">
           <div class="flex-col pb-3">
@@ -119,6 +117,5 @@ const submit = async () => {
         </div>
       </div>
     </div>
-    <toast-item :status="status"></toast-item>
   </div>
 </template>

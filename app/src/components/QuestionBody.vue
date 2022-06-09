@@ -47,7 +47,7 @@ const emit = defineEmits(["edit"]);
       <div class="flex" v-if="isMyQuestion">
         <button
           @click="emit('edit')"
-          class="flex w-6 h-6 rounded-full text-gray-500 dark:text-gray-300 hover:text-pink-500 dark:hover:text-midnight hover:bg-gray-100 dark:hover:bg-pink-200"
+          class="flex w-6 h-6 rounded-full text-gray-500 dark:text-gray-300 hover:text-pink-500 dark:hover:text-midnight-900 hover:bg-gray-100 dark:hover:bg-pink-200"
           title="Update question"
         >
           <icon-edit></icon-edit>

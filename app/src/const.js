@@ -15,3 +15,9 @@ export const FILTER = {
   amount_length: 8,
   bool_length: 1,
 };
+
+export const STATUS = {
+  success: 1,
+  danger: 2,
+  warning: 3,
+};

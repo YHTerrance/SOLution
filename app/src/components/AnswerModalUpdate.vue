@@ -2,10 +2,9 @@
 import { toRefs, ref, computed } from "vue";
 import { useAutoresizeTextarea, useCountCharacterLimit } from "@/composables";
 import SubmitButton from "@/components/atoms/SubmitButton.vue";
-import ToastItem from "@/components/atoms/ToastItem.vue";
 import { useWallet } from "solana-wallets-vue";
 import { updateAnswer } from "@/api";
-import { Status } from "@/models";
+
 const props = defineProps({
   answer: Object,
 });
@@ -38,9 +37,6 @@ const canUpdate = computed(() => content.value && characterLimit.value > 0);
 const loading = ref(false);
 const emit = defineEmits(["added", "failed", "close"]);
 
-// Toast
-const status = ref(new Status());
-
 const update = async () => {
   if (!canUpdate.value) return;
   loading.value = true;
@@ -48,16 +44,13 @@ const update = async () => {
     let _answer = await updateAnswer(answer.value, content.value);
     // Update content of parent prop
     answer.value.content = _answer.content;
-    status.value.activate("success", "Successfully answered question!");
     emit("added", answer);
   } catch (error) {
     console.log(error);
-    status.value.activate("danger", "Failed to answer");
     emit("failed", answer);
   } finally {
     loading.value = false;
     content.value = "";
-    setTimeout(() => status.value.deactivate(), 5000);
     close_modal();
   }
 };
@@ -74,7 +67,7 @@ const update = async () => {
       ></div>
 
       <div
-        class="bg-white dark:bg-midnight dark:text-white w-11/12 md:max-w-md mx-auto rounded-lg shadow-lg overflow-y-auto z-100"
+        class="bg-white dark:bg-midnight-900 dark:text-white w-11/12 md:max-w-md mx-auto rounded-lg shadow-lg overflow-y-auto z-100"
       >
         <div class="py-4 text-left px-6">
           <div class="flex-col pb-3">
@@ -108,6 +101,5 @@ const update = async () => {
         </div>
       </div>
     </div>
-    <toast-item :status="status"></toast-item>
   </div>
 </template>

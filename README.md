@@ -1,12 +1,38 @@
 # SOLution
 
-## Quick Start
+<p align="center">
+  <img src="./app/public/android-chrome-192x192.png" />
+</p>
+
+## Concept
+
+Our goal is to create a place for people to ask questions and get valuable answers incentivized by our novel business model of answer-to-earn. Since our main target is STEM students who strive to get the best quality of information from the Internet. You are welcome to use your familiar tools of Markdown and Latex to ask your questions too!
+
+What you can do:
+
+* Ask Questions: You need to pay for the rent, the base fee and the reward fee for each question you asked. The base fee will be returned to you later and the reward fee will be given to the best answer.
+
+* Answer: You can submit the answer in the question's thread with the rent.
+
+* Earn:
+  * If you are the asker, you can select the best answer as the solution and **retrieve the base fee**.
+  * If you are the answerer and your answer is selected as the solution, you can **earn the reward** from the asker. However, don't worry about your answer not being selected, you can delete your answer to get back the rent.
+
+<p align="center">
+<img src="https://assets.akaswap.com/ipfs/QmWcdx2MKkDnPEPdopRnTih1DpgykNt3N3xea7PFVevX1T" alt="poster" width="500"/>
+</p>
+
+### Demo Video
+
+[![SOLution Demo Video](./assets/Screenshot.png)](https://www.youtube.com/watch?v=eipn0sjSXEc)
+
+## Play with the app
 
 1. Install your wallet for Solana (Phantom or Solflare Supported).
 2. Airdrop yourself from SOL using `solana-cli` or [Sol Faucet](solfaucet.com).
 3. Enjoy the app! ([Demo Link](http://solution-solana-webapp.s3-website-us-west-2.amazonaws.com/#/)).
 
-## Important !!
+## Important: Before you start
 
 Please follow the following best practice for all development on this project.
 
@@ -15,18 +41,23 @@ Please follow the following best practice for all development on this project.
 
 ## Project Structure
 
-- **`app/`**: frontend Vuejs application
-- **`programs/`**: Rust backend smart contract
-- **`target/`**: target directory for deployment, generated after `anchor build`
-  - **`target/deploy/so_lution-keypair.json`**: private key that proves you own the contract
-  - **`target/idl/so_lution.json`**: interface description (used to specify the interface between frontend and backend, like a schema)
-- **`tests/`**: tests that is run against the Rust backend
-- **`Anchor.toml`**: main configuration file for Anchor
+* **`app/`**: frontend Vuejs application
+* **`programs/`**: Rust backend smart contract
+* **`target/`**: target directory for deployment, generated after `anchor build`
+  * **`target/deploy/so_lution-keypair.json`**: the private key that proves you own the contract
+  * **`target/idl/so_lution.json`**: an interface description language file used to specify the interface between frontend and backend, like a schema
+* **`tests/`**: tests that are run against the Rust backend
+* **`Anchor.toml`**: the main configuration file for Anchor
 
 ## Resources
 
-- [Quick Developer Docs](https://hackmd.io/vNTooMzwQ_uJdSPPijLu0w)
-- [Main Reference Tutorial](https://lorisleiva.com/create-a-solana-dapp-from-scratch)
+* [Private Developer Docs](https://hackmd.io/vNTooMzwQ_uJdSPPijLu0w)
+* [Create a Solana Dapp from scratch](https://lorisleiva.com/create-a-solana-dapp-from-scratch)
+* [Anchor Book](https://book.anchor-lang.com/introduction/introduction.html)
+* [Solana Cookbook](https://solanacookbook.com/#contributing)
+* [Anchor Related Documentation](https://github.com/project-serum/anchor)
+* [Soldev Tutorials](https://soldev.app/library/tutorials)
+* [Solana Official Docs](https://docs.solana.com)
 
 ## Development Cycle
 
@@ -71,6 +102,6 @@ solana airdrop 2
 anchor build
 anchor deploy
 
-# Push your code to the main branch to auto-deploy on AWS S3.
+# Push your code to the remote repository.
 git push
 ```
