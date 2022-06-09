@@ -30,7 +30,7 @@ What you can do:
 
 1. Install your wallet for Solana (Phantom or Solflare Supported).
 2. Airdrop yourself from SOL using `solana-cli` or [Sol Faucet](solfaucet.com).
-3. Enjoy the app! ([Demo Link](http://solution-solana-webapp.s3-website-us-west-2.amazonaws.com/#/)).
+3. Enjoy the app! ([Demo Link](http://solution.dingbading.com)).
 
 ## Important: Before you start
 
