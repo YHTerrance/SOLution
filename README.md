@@ -6,7 +6,7 @@
 
 ## Concept
 
-Our goal is to create a place for people to ask questions and get valuable answers incentivized by novel business model of answer-to-earn a.k.a. Answer-to-Earn. You are welcome to use markdown or Latex to ask your questions too!
+Our goal is to create a place for people to ask questions and get valuable answers incentivized by our novel business model of answer-to-earn. Since our main target is STEM students who strive to get the best quality of information from the Internet. You are welcome to use your familiar tools of Markdown and Latex to ask your questions too!
 
 What you can do:
 
