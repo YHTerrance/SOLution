@@ -1,5 +1,9 @@
 # SOLution
 
+<p align="center">
+  <img src="./app/public/android-chrome-192x192.png" />
+</p>
+
 ## Concept
 
 Our goal is to create a place for people to ask questions and get valuable answers incentivized by novel business model of answer-to-earn a.k.a. Answer-to-Earn. You are welcome to use markdown or Latex to ask your questions too!
@@ -14,7 +18,9 @@ What you can do:
   * If you are the asker, you can select the best answer as the solution and **retrieve the base fee**.
   * If you are the answerer and your answer is selected as the solution, you can **earn the reward** from the asker. However, don't worry about your answer not being selected, you can delete your answer to get back the rent.
 
-<img src="https://assets.akaswap.com/ipfs/QmWcdx2MKkDnPEPdopRnTih1DpgykNt3N3xea7PFVevX1T" alt="poster"/>
+<p align="center">
+<img src="https://assets.akaswap.com/ipfs/QmWcdx2MKkDnPEPdopRnTih1DpgykNt3N3xea7PFVevX1T" alt="poster" width="500"/>
+</p>
 
 ### Demo Video
 
