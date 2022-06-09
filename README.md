@@ -105,3 +105,9 @@ anchor deploy
 # Push your code to the remote repository.
 git push
 ```
+
+## Environment
+
+* `anchor-cli 0.24.2`
+* `solana-cli 1.9.25`
+* `rustc 1.61.0`
