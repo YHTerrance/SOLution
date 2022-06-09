@@ -1,22 +1,24 @@
 version: 0.2
 
 phases:
-  install:
-    commands:
-      - npm i yarn@latest -g
-      - pip install --upgrade pip
-      - pip install --upgrade awscli
-  pre_build:
-    commands:
-      - cd app
-      - echo "Installing dependencies"
-      - yarn
-  build:
-    commands:
-      - echo "Building VueJS app"
-      - yarn run build:devnet
+    install:
+        commands:
+            - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+            - nvm use 16
+            - npm i yarn@latest -g
+            - pip install --upgrade pip
+            - pip install --upgrade awscli
+    pre_build:
+        commands:
+            - cd app
+            - echo "Installing dependencies"
+            - yarn
+    build:
+        commands:
+            - echo "Building VueJS app"
+            - yarn run build:devnet
 
 artifacts:
-  files:
-    - "**/*"
-  base-directory: "app/dist"
+    files:
+        - "**/*"
+    base-directory: "app/dist"
