@@ -7,8 +7,8 @@
 
 ## Useful documentation
 
--   [Tailwind](https://tailwindcss.com/docs/installation)
--   [VueJS](https://vuejs.org/)
+- [Tailwind](https://tailwindcss.com/docs/installation)
+- [VueJS](https://vuejs.org/)
 
 ## Project setup
 
