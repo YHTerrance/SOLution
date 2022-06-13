@@ -1,0 +1,5 @@
+# Ignore artifacts:
+dist
+node_modules
+.history
+src/idl
