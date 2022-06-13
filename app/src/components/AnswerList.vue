@@ -1,13 +1,21 @@
 <script setup>
 import { toRefs, computed } from "vue";
 import AnswerCard from "@/components/AnswerCard.vue";
+import { useWorkspace } from "@/composables";
 
 const props = defineProps({
   question: Object,
   answers: Object,
 });
 
+const isMyQuestion = computed(
+  () =>
+    wallet.value &&
+    wallet.value.publicKey.toBase58() === question.value.author.toBase58()
+);
+
 const { question, answers } = toRefs(props);
+const { wallet } = useWorkspace();
 
 const orderedAnswers = computed(() => {
   return answers.value
@@ -21,7 +29,6 @@ const solution = computed(() => {
     .slice()
     .filter((a) => a.key == question.value.solution.toBase58())[0];
 });
-
 </script>
 
 <template>
@@ -39,7 +46,7 @@ const solution = computed(() => {
         :answer="answer"
         :question="question"
         :isSolution="false"
-        :selectable="!solution"
+        :selectable="!solution && isMyQuestion"
       ></answer-card>
     </div>
   </div>

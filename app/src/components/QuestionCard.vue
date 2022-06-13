@@ -52,6 +52,7 @@ fetchAnswers([targetQuestionFilter(question.value.publicKey.toBase58())])
   .then((fetchedAnswers) => (answers.value = fetchedAnswers))
   .finally(() => {
     loading.value = false;
+    console.log(answers.value);
   });
 const addAnswer = (answer) => answers.value.push(answer);
 
