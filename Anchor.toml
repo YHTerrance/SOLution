@@ -2,11 +2,11 @@
 seeds = false
 
 [programs.localnet]
-so_lution = "AQJ7RmbJtwGHru6aimiLriPZ4gTs7q5NnzeetyWgNfxo"
+so_lution = "AhTPm4QecF67HhvFnYVJkM9jrgMwJcJNC3ULTHnaxdkX"
 [programs.devnet]
-so_lution = "AQJ7RmbJtwGHru6aimiLriPZ4gTs7q5NnzeetyWgNfxo"
+so_lution = "AhTPm4QecF67HhvFnYVJkM9jrgMwJcJNC3ULTHnaxdkX"
 [programs.mainnet]
-so_lution = "AQJ7RmbJtwGHru6aimiLriPZ4gTs7q5NnzeetyWgNfxo"
+so_lution = "AhTPm4QecF67HhvFnYVJkM9jrgMwJcJNC3ULTHnaxdkX"
 
 [registry]
 url = "https://anchor.projectserum.com"
@@ -17,4 +17,5 @@ wallet = "~/.config/solana/id.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+reset = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 scripts/reset.ts"
 copy-idl = "mkdir -p app/src/idl && cp target/idl/so_lution.json app/src/idl/so_lution.json"

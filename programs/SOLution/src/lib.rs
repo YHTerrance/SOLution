@@ -6,7 +6,7 @@ const BASE_FEE_LAMPORTS: u64 = LAMPORTS_PER_SOL / 1000;
 const MIN_REWARD_LAMPORTS: u64 = LAMPORTS_PER_SOL / 1000;
 const OWNER_PUBKEY: &str = "Eyrm7NECYjcR2AZh1BfQ63mLoDBycwuFQRhiU4FrdQem";
 
-declare_id!("AQJ7RmbJtwGHru6aimiLriPZ4gTs7q5NnzeetyWgNfxo");
+declare_id!("AhTPm4QecF67HhvFnYVJkM9jrgMwJcJNC3ULTHnaxdkX");
 
 #[error_code]
 pub enum ErrorCode {
