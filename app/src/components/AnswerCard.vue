@@ -60,7 +60,7 @@ const onRedeem = async () => {
     await redeemReward(answer.value);
     answer.value.amount = 0;
     status.addSuccessStatus(
-      `Successfully redeemed reward: ${answer.value} SOL.`
+      `Successfully redeemed reward: ${answer.value.amount} SOL.`
     );
   } catch (error) {
     console.log(error);

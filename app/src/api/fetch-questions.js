@@ -25,10 +25,22 @@ export const topicFilter = (topic) => ({
     offset:
       FILTER.discriminator_length + // Discriminator.
       FILTER.public_key_length + // Author public key.
-      FILTER.public_key_length + // Solution public key
       FILTER.timestamp_length + // Timestamp.
+      FILTER.bool_length + // hasSolution
+      FILTER.public_key_length + // Solution public key
+      FILTER.amount_length + // Amount
       FILTER.string_length_prefix, // Topic string prefix.
     bytes: bs58.encode(Buffer.from(topic)),
+  },
+});
+
+export const hasSolutionFilter = () => ({
+  memcmp: {
+    offset:
+      FILTER.discriminator_length + // Discriminator.
+      FILTER.public_key_length + // Author public key.
+      FILTER.timestamp_length, // Timestamp.
+    bytes: bs58.encode(new BN(1, "le").toArray()),
   },
 });
 
@@ -57,7 +69,7 @@ export const paginateQuestions = (
       program.value.programId,
       {
         filters: [questionDiscriminatorFilter, ...filters.value],
-        dataSlice: { offset: 40, length: 8 },
+        dataSlice: { offset: 8 + 32, length: 8 }, // discriminator + author public key
       }
     );
 

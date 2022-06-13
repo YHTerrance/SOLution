@@ -28,7 +28,6 @@ const addQuestion = (question) => questions.value.push(question);
 
 <template>
   <div>
-    <!-- TODO: Check connected wallet -->
     <div
       v-if="wallet"
       class="border-b px-8 py-4 bg-gray-50 dark:bg-pink-100/10 dark:text-white"

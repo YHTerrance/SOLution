@@ -83,6 +83,27 @@
       ]
     },
     {
+      "name": "deleteQuestion",
+      "accounts": [
+        {
+          "name": "question",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "receiver",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "submitAnswer",
       "accounts": [
         {
@@ -146,14 +167,14 @@
           "isSigner": false
         },
         {
-          "name": "author",
-          "isMut": false,
-          "isSigner": true
-        },
-        {
           "name": "receiver",
           "isMut": true,
           "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
         }
       ],
       "args": []
@@ -190,8 +211,16 @@
             "type": "i64"
           },
           {
+            "name": "hasSolution",
+            "type": "bool"
+          },
+          {
             "name": "solution",
             "type": "publicKey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
           },
           {
             "name": "topic",
@@ -200,10 +229,6 @@
           {
             "name": "content",
             "type": "string"
-          },
-          {
-            "name": "amount",
-            "type": "u64"
           }
         ]
       }
@@ -222,6 +247,10 @@
             "type": "i64"
           },
           {
+            "name": "isSolution",
+            "type": "bool"
+          },
+          {
             "name": "targetQuestion",
             "type": "publicKey"
           },
@@ -230,16 +259,12 @@
             "type": "publicKey"
           },
           {
-            "name": "content",
-            "type": "string"
-          },
-          {
             "name": "amount",
             "type": "u64"
           },
           {
-            "name": "isSolution",
-            "type": "bool"
+            "name": "content",
+            "type": "string"
           }
         ]
       }
@@ -263,6 +288,6 @@
     }
   ],
   "metadata": {
-    "address": "AQJ7RmbJtwGHru6aimiLriPZ4gTs7q5NnzeetyWgNfxo"
+    "address": "AhTPm4QecF67HhvFnYVJkM9jrgMwJcJNC3ULTHnaxdkX"
   }
 }

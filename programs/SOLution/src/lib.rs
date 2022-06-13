@@ -1,10 +1,12 @@
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::native_token::LAMPORTS_PER_SOL;
+use std::str::FromStr;
 
 const BASE_FEE_LAMPORTS: u64 = LAMPORTS_PER_SOL / 1000;
 const MIN_REWARD_LAMPORTS: u64 = LAMPORTS_PER_SOL / 1000;
+const OWNER_PUBKEY: &str = "Eyrm7NECYjcR2AZh1BfQ63mLoDBycwuFQRhiU4FrdQem";
 
-declare_id!("AQJ7RmbJtwGHru6aimiLriPZ4gTs7q5NnzeetyWgNfxo");
+declare_id!("AhTPm4QecF67HhvFnYVJkM9jrgMwJcJNC3ULTHnaxdkX");
 
 #[error_code]
 pub enum ErrorCode {
@@ -20,7 +22,12 @@ pub enum ErrorCode {
 pub mod so_lution {
   use super::*;
 
-  pub fn ask_question(ctx: Context<AskQuestion>, topic: String, content: String, amount: u64) -> Result<()> {
+  pub fn ask_question(
+    ctx: Context<AskQuestion>,
+    topic: String,
+    content: String,
+    amount: u64,
+  ) -> Result<()> {
     let question: &mut Account<Question> = &mut ctx.accounts.question;
     let author: &Signer = &ctx.accounts.author;
     let clock: Clock = Clock::get().unwrap();
@@ -34,7 +41,7 @@ pub mod so_lution {
     }
 
     if amount < BASE_FEE_LAMPORTS + MIN_REWARD_LAMPORTS {
-      return Err(ErrorCode::InsufficientFunds.into())
+      return Err(ErrorCode::InsufficientFunds.into());
     }
 
     question.author = *author.key;
@@ -42,6 +49,7 @@ pub mod so_lution {
     question.topic = topic;
     question.content = content;
     question.amount = amount;
+    question.has_solution = false;
 
     // Transfer 1 SOL from author to question
     let ix = anchor_lang::solana_program::system_instruction::transfer(
@@ -51,11 +59,8 @@ pub mod so_lution {
     );
 
     anchor_lang::solana_program::program::invoke(
-        &ix,
-        &[
-            author.to_account_info(),
-            question.to_account_info(),
-        ],
+      &ix,
+      &[author.to_account_info(), question.to_account_info()],
     )?;
 
     Ok(())
@@ -66,6 +71,7 @@ pub mod so_lution {
     let solution: &mut Account<Answer> = &mut ctx.accounts.answer;
     let author: &Signer = &ctx.accounts.author;
 
+    question.has_solution = true;
     question.solution = solution.key();
 
     let balance = question.amount;
@@ -81,7 +87,11 @@ pub mod so_lution {
     Ok(())
   }
 
-  pub fn update_question(ctx: Context<UpdateQuestion>, topic: String, content: String) -> Result<()> {
+  pub fn update_question(
+    ctx: Context<UpdateQuestion>,
+    topic: String,
+    content: String,
+  ) -> Result<()> {
     let question: &mut Account<Question> = &mut ctx.accounts.question;
 
     if topic.chars().count() > 50 {
@@ -98,9 +108,9 @@ pub mod so_lution {
     Ok(())
   }
 
-  // pub fn delete_question(_ctx: Context<DeleteQuestion>) -> Result<()> {
-  //   Ok(())
-  // }
+  pub fn delete_question(_ctx: Context<DeleteQuestion>) -> Result<()> {
+    Ok(())
+  }
 
   pub fn submit_answer(
     ctx: Context<SubmitAnswer>,
@@ -121,6 +131,7 @@ pub mod so_lution {
     answer.target_author = target_author;
     answer.timestamp = clock.unix_timestamp;
     answer.content = content;
+    answer.is_solution = false;
 
     Ok(())
   }
@@ -129,7 +140,7 @@ pub mod so_lution {
     let answer: &mut Account<Answer> = &mut ctx.accounts.answer;
 
     if content.chars().count() > 280 {
-      return Err(ErrorCode::ContentTooLong.into())
+      return Err(ErrorCode::ContentTooLong.into());
     }
 
     answer.content = content;
@@ -153,26 +164,26 @@ pub mod so_lution {
   }
 }
 
-
 #[account]
 pub struct Question {
   pub author: Pubkey,
   pub timestamp: i64,
+  pub has_solution: bool,
   pub solution: Pubkey,
+  pub amount: u64,
   pub topic: String,
   pub content: String,
-  pub amount: u64,
 }
 
 #[account]
 pub struct Answer {
   pub author: Pubkey,
   pub timestamp: i64,
+  pub is_solution: bool,
   pub target_question: Pubkey,
   pub target_author: Pubkey,
-  pub content: String,
   pub amount: u64,
-  pub is_solution: bool
+  pub content: String,
 }
 
 #[derive(Accounts)]
@@ -202,13 +213,15 @@ pub struct UpdateQuestion<'info> {
   pub author: Signer<'info>,
 }
 
-// #[derive(Accounts)]
-// pub struct DeleteQuestion<'info> {
-//   #[account(mut, has_one = author, close = author)]
-//   // has_one: only allows author to do this | close: transfers the lamports to author after closing the account
-//   pub question: Account<'info, Question>,
-//   pub author: Signer<'info>,
-// }
+#[derive(Accounts)]
+pub struct DeleteQuestion<'info> {
+  #[account(mut, close = receiver, constraint = question.author == receiver.key())]
+  pub question: Account<'info, Question>,
+  #[account(mut)]
+  pub receiver: SystemAccount<'info>,
+  #[account(mut, constraint = authority.key() == Pubkey::from_str(OWNER_PUBKEY).unwrap())]
+  pub authority: Signer<'info>,
+}
 
 #[derive(Accounts)]
 pub struct SubmitAnswer<'info> {
@@ -223,16 +236,16 @@ pub struct SubmitAnswer<'info> {
 pub struct UpdateAnswer<'info> {
   #[account(mut, has_one = author)]
   pub answer: Account<'info, Answer>,
-  pub author: Signer<'info>
+  pub author: Signer<'info>,
 }
 
 #[derive(Accounts)]
 pub struct DeleteAnswer<'info> {
-  #[account(mut, constraint = !answer.is_solution && ((answer.author == author.key() || answer.target_author == author.key()) && answer.author == receiver.key()), close = receiver)]
+  #[account(mut, constraint = authority.key() == Pubkey::from_str(OWNER_PUBKEY).unwrap() || (!answer.is_solution && ((answer.author == authority.key() || answer.target_author == authority.key()) && answer.author == receiver.key())), close = receiver)]
   pub answer: Account<'info, Answer>,
-  pub author: Signer<'info>,
   #[account(mut)]
   pub receiver: SystemAccount<'info>,
+  pub authority: Signer<'info>,
 }
 
 #[derive(Accounts)]
@@ -240,7 +253,7 @@ pub struct RedeemReward<'info> {
   #[account(mut, has_one = author)]
   pub answer: Account<'info, Answer>,
   #[account(mut)]
-  pub author: Signer<'info>
+  pub author: Signer<'info>,
 }
 
 const DISCRIMINATOR_LENGTH: usize = 8;
@@ -256,10 +269,11 @@ impl Question {
   const LEN: usize = DISCRIMINATOR_LENGTH
         + PUBLIC_KEY_LENGTH // Author
         + TIMESTAMP_LENGTH // Timestamp
+        + BOOL_LENGTH // Has Solution
         + PUBLIC_KEY_LENGTH // Solution
+        + AMOUNT_LENGTH // Amount
         + STRING_LENGTH_PREFIX + MAX_TOPIC_LENGTH // Topic
-        + STRING_LENGTH_PREFIX + MAX_CONTENT_LENGTH // Content
-        + AMOUNT_LENGTH; // Amount
+        + STRING_LENGTH_PREFIX + MAX_CONTENT_LENGTH; // Content
 }
 
 impl Answer {
@@ -268,7 +282,7 @@ impl Answer {
         + TIMESTAMP_LENGTH // Timestamp
         + PUBLIC_KEY_LENGTH // Target Question
         + PUBLIC_KEY_LENGTH // Target Author
-        + STRING_LENGTH_PREFIX + MAX_CONTENT_LENGTH // Content
         + AMOUNT_LENGTH // Amount
-        + BOOL_LENGTH; // Boolean recording if it is the solution
+        + BOOL_LENGTH // Boolean recording if it is the solution
+        + STRING_LENGTH_PREFIX + MAX_CONTENT_LENGTH; // Content
 }
