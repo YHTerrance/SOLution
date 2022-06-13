@@ -25,12 +25,22 @@ export const topicFilter = (topic) => ({
     offset:
       FILTER.discriminator_length + // Discriminator.
       FILTER.public_key_length + // Author public key.
-      FILTER.public_key_length + // Solution public key
       FILTER.timestamp_length + // Timestamp.
+      FILTER.public_key_length + // Solution public key
       FILTER.string_length_prefix, // Topic string prefix.
     bytes: bs58.encode(Buffer.from(topic)),
   },
 });
+
+// export const hasSolutionFilter = () => ({
+//   memcmp: {
+//     offset:
+//       FILTER.discriminator_length + // Discriminator.
+//       FILTER.public_key_length + // Author public key.
+//       FILTER.timestamp_length, // Timestamp.
+//     bytes:
+//   },
+// });
 
 export const paginateQuestions = (
   filters = [],
