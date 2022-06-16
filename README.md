@@ -6,13 +6,12 @@
 
 ## Concept
 
-Our goal is to create a place for people to ask questions and get valuable answers incentivized by our novel business model of answer-to-earn. Since our main target is STEM students who strive to get the best quality of information from the Internet. You are welcome to use your familiar tools of Markdown and Latex to ask your questions too!
+Our goal is to create a place for people to ask questions and get valuable answers incentivized by our novel business model of answer-to-earn. Since our main target is STEM students who strive to get the best quality of information from the Internet. Our app also supports Tex and Markdown syntaxes.
 
 What you can do:
 
-* Ask Questions: You need to pay for the rent, the base fee and the reward fee for each question you asked. The base fee will be returned to you later and the reward fee will be given to the best answer.
-
-* Answer: You can submit the answer in the question's thread with the rent.
+* Ask Questions: Pay for the base fee and reward for each question you asked. Base fee will be returned when an answer is selected and the reward will be given to the selected answer.
+* Answer: You can submit the answer in the question's thread.
 
 * Earn:
   * If you are the asker, you can select the best answer as the solution and **retrieve the base fee**.
@@ -59,7 +58,38 @@ Please follow the following best practice for all development on this project.
 * [Soldev Tutorials](https://soldev.app/library/tutorials)
 * [Solana Official Docs](https://docs.solana.com)
 
-## Development Cycle
+## Environment
+
+* Versions
+  * `node 16.*.*`
+  * `anchor-cli 0.24.2`
+  * `solana-cli 1.9.25`
+  * `rustc 1.61.0`
+
+* Current Deployed ProgramID on Devnet: `AhTPm4QecF67HhvFnYVJkM9jrgMwJcJNC3ULTHnaxdkX`
+  * check `target/deploy/so_lution-keypair.json`
+* Authority of Deployed Program on Devnet: `Eyrm7NECYjcR2AZh1BfQ63mLoDBycwuFQRhiU4FrdQem`
+* When you change the **programID**, make sure to check the following files and make sure that they or consistent (or you can just Ctrl + F search the entire directory)
+  * `Anchor.toml`
+  * Top of `programs/src/lib.rs`
+  * Bottom of `target/idl/so_lution.json`
+
+## Getting Started (Development Cycle)
+
+### 1. Clone repository
+
+### 2. [Create your Solana Wallet](https://docs.solana.com/wallet-guide)
+
+```bash
+# Generate new keypair
+solana-keygen new
+# Check your wallet address
+solana address
+# Check your wallet balance
+solana balance
+```
+
+### 3. Develop locally
 
 ```bash
 # Make sure you’re on the localnet.
@@ -68,13 +98,8 @@ solana config set --url localhost
 
 # Code…
 
-# Run the tests. (builds, deploys, tests all at once)
+# Run the tests. (builds, deploys, tests, and shuts off all at once)
 anchor test
-
-# Build, deploy and start a local ledger.
-anchor localnet
-
-# Or
 
 # -r resets the validator to genesis (or it will preload from test-ledger/)
 solana-test-validator [-r]
@@ -84,24 +109,60 @@ anchor deploy
 # Run tests on the created local server to generate dummy data (Note that it will probably fail if your validator is not freshly created)
 anchor run test
 
-
-# Copy the new IDL to the frontend.
+# Copy the new IDL to frontend.
 anchor run copy-idl
 
-# Serve your frontend application locally.
-yarn run serve
+# Serve your frontend application on localnet.
+cd app && yarn run serve
+```
 
+### 4. Develop on Devnet (Possibly Mainnet in the future)
+
+```bash
 # Switch to the devnet cluster to deploy there.
 solana config set --url devnet
-# And update your Anchor.toml file.
 
-# Airdrop yourself some money if necessary. (Do this multiple times likely need 2 ~ 4)
+# !! Update your Anchor.toml file !!
+
+# Airdrop yourself some money if necessary. (Do this multiple times likely need 2 ~ 4 SOL)
 solana airdrop 2
 
 # Build and deploy to devnet.
 anchor build
 anchor deploy
 
-# Push your code to the remote repository.
-git push
+# Copy the new IDL to frontend.
+anchor run copy-idl
+
+# Run frontend for devnet locally
+cd app && yarn run serve:devnet
 ```
+
+## Helpful tips
+
+### Modifying program ID
+
+- modify `Anchor.toml`, `programs/src/lib.rs`
+- `anchor run copy-idl`
+
+### Import filesystem wallet into Phantom wallet
+
+```python
+import base58
+json_string = [...] # ~/.config/solana/id.json
+private_key = base58.b58encode(bytes(json_string))
+```
+
+### Import Phantom wallet into filesystem wallet
+
+```python
+import base58
+byte_array = base58.b58decode(MY_PRIVATE_KEY_IN_BASE58)
+json_string = "[" + ",".join(map(lambda b: str(b), byte_array)) + "]" # ~/.config/solana/id.json
+```
+
+## License
+
+SOLution is licensed under Apache 2.0.
+
+Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in SOLution by you, as defined in the Apache-2.0 license, shall be licensed as above, without any additional terms or conditions.
