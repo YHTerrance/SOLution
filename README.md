@@ -138,6 +138,29 @@ anchor run copy-idl
 cd app && yarn run serve:devnet
 ```
 
+## Helpful tips
+
+### Modifying program ID
+
+- modify `Anchor.toml`, `programs/src/lib.rs`
+- `anchor run copy-idl`
+
+### Import filesystem wallet into Phantom wallet
+
+```python
+import base58
+json_string = [...] # ~/.config/solana/id.json
+private_key = base58.b58encode(bytes(json_string))
+```
+
+### Import Phantom wallet into filesystem wallet
+
+```python
+import base58
+byte_array = base58.b58decode(MY_PRIVATE_KEY_IN_BASE58)
+json_string = "[" + ",".join(map(lambda b: str(b), byte_array)) + "]" # ~/.config/solana/id.json
+```
+
 ## License
 
 SOLution is licensed under Apache 2.0.
